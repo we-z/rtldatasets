@@ -1,0 +1,56 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "rtldatasets-com",
+  "main": "./worker/index.js",
+  "compatibility_date": "2026-08-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*", "/purchase-access", "/purchase-access/*", "/purchase-success", "/purchase-success/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "ORDERS",
+      "database_name": "rtldatasets-orders",
+      "database_id": "5f8f3805-b0bd-4a41-be68-d7fda360d7a4"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "PRODUCTS",
+      "bucket_name": "rtldatasets-products"
+    }
+  ],
+  "send_email": [
+    {
+      "name": "EMAIL",
+      "remote": true
+    }
+  ],
+  "ratelimits": [
+    {
+      "name": "CHECKOUT_RATE_LIMITER",
+      "namespace_id": "240801001",
+      "simple": {
+        "limit": 10,
+        "period": 60
+      }
+    }
+  ],
+  "vars": {
+    "STORE_LIVE": "false",
+    "SITE_URL": "https://www.rtldatasets.com",
+    "STRIPE_AUTOMATIC_TAX": "false",
+    "SAMPLE_R2_KEY": "artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/e0c9a4f2e9a2aaa295c54b032ad8a4e9bf1f186c0b1b3e2fbf5b855f3bba91c7/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz",
+    "SAMPLE_ARCHIVE_SHA256": "e0c9a4f2e9a2aaa295c54b032ad8a4e9bf1f186c0b1b3e2fbf5b855f3bba91c7",
+    "SAMPLE_ARCHIVE_BYTES": "69732",
+    "FULFILLMENT_FROM_EMAIL": "delivery@rtldatasets.com"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

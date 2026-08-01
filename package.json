@@ -1,0 +1,27 @@
+{
+  "name": "rtldatasets.com",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --config wrangler.staging.jsonc",
+    "cf:types": "wrangler types",
+    "db:migrate:local": "wrangler d1 migrations apply rtldatasets-orders --local",
+    "db:migrate:remote": "wrangler d1 migrations apply rtldatasets-orders --remote",
+    "package:sample": "node scripts/package-sample.mjs",
+    "upload:sample": "node scripts/upload-sample.mjs",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "stripe": "22.4.0"
+  },
+  "devDependencies": {
+    "tar": "7.5.22",
+    "wrangler": "4.118.0"
+  }
+}

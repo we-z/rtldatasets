@@ -11,10 +11,12 @@
     <meta property="og:description" content="Verified, provenance-clean RTL datasets for chip design AI training">
     <meta name="twitter:title" content="RTL Training Datasets">
     <meta name="twitter:description" content="Verified, provenance-clean RTL datasets for chip design AI training">
+    <link rel="canonical" href="https://www.rtldatasets.com/">
+    <script src="/assets/checkout.js" defer></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { min-height: 100vh; padding: 2rem; display: flex; justify-content: center; align-items: flex-start; }
-        .content { text-align: left; max-width: 600px; padding-top: 2rem; }
+        .content { text-align: left; max-width: 720px; padding-top: 2rem; }
         h1 { font-size: 2.1rem; margin-bottom: 1.5rem; }
         p { font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.6; }
         .contact-btn { display: inline-block; color: blue; padding: 0.875rem 0rem; font-size: 1.2rem; text-decoration: underline; }
@@ -24,14 +26,26 @@
         .contact .contact-btn:hover { text-decoration: underline; }
         ul { font-size: 1.2rem; line-height: 1.6; margin-bottom: 2rem; padding-left: 1.5rem; }
         li { margin-bottom: 0.5rem; }
+        .group-title { font-size: 1.5rem; margin: 1rem 0 1.25rem; }
         .section-title { font-size: 1.35rem; margin-bottom: 1rem; font-weight: bold; }
+        .product-card { border: 1px solid #bbb; padding: 1.5rem; margin: 2.5rem 0; }
+        .product-card h2 { font-size: 1.55rem; margin-bottom: 0.75rem; }
+        .product-card h3 { font-size: 1.2rem; margin-bottom: 0.75rem; }
+        .product-card p, .product-card ul { font-size: 1.05rem; margin-bottom: 1.25rem; }
+        .price { font-size: 1.35rem !important; }
+        .terms-check { display: block; font-size: 0.95rem; line-height: 1.5; margin: 1rem 0; }
+        .terms-check input { margin-right: 0.4rem; }
+        .purchase-btn { border: 1px solid #111; background: #111; color: white; cursor: pointer; padding: 0.8rem 1rem; font-size: 1.05rem; }
+        .purchase-btn:hover:not(:disabled) { background: #333; }
+        .purchase-btn:disabled { cursor: not-allowed; opacity: 0.55; }
+        .store-status, .fine-print { font-size: 0.9rem !important; margin: 0.8rem 0 0 !important; }
     </style>
 </head>
 <body>
-    <div class="content">
+    <main class="content">
         <h1>RTL Datasets</h1>
         <p>
-            We offer a massive VHDL, Verilog, and SystemVerilog (synthesizing and simulating) corpus/ RL environment.
+            We offer a massive corpus and RL environment for synthesizing and simulating VHDL, Verilog, and SystemVerilog.
         </p>
         <ul>
             <li><strong>50,000+</strong> code bases</li>
@@ -40,112 +54,112 @@
             <li><strong>100,000+</strong> verified RTL tasks that hill climb</li>
         </ul>
         <p>
-            Our data is fully synthetic, novel, and proprietary. Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights. Trained models and outputs remain yours.
+            Our operator-authored synthetic transformations, generated evaluation metadata, diagnostic evidence, and curation methodology are fully synthetic, novel, and proprietary. Where a package incorporates licensed third-party source material, the applicable open-source rights and notices remain intact. Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights. Trained models and outputs remain yours.
         </p>
         <div class="contact">
             Contact us via:<br>
             Email: <a href="mailto:root@puul.ai" class="contact-btn">root@puul.ai</a><br>
             Signal/text: <a href="sms:+16508809229" class="contact-btn">650-880-9229</a>
         </div>
-        <p style="font-size: 1.5rem; font-weight: bold;">RTL by Chip Type</p>
-        <p class="section-title">TPU</p>
+        <h2 class="group-title">RTL by Chip Type</h2>
+        <h3 class="section-title">TPU</h3>
         <ul>
             <li><strong>Systolic arrays</strong>: Weight-stationary, output-stationary, and row-stationary dataflows for matrix multiplication in training and inference silicon</li>
             <li><strong>Tensor processing pipelines</strong>: Activation functions, accumulator chains, and configurable NxN matrix multiply units</li>
             <li><strong>AI accelerator SoCs</strong>: End-to-end TPU-style designs with on-chip SRAM, DMA engines, and host interfaces</li>
         </ul>
-        <p class="section-title">GPU</p>
+        <h3 class="section-title">GPU</h3>
         <ul>
-            <li><strong>Shader cores & SIMD pipelines</strong>: Warp schedulers, register files, and execution units for GPGPU compute</li>
-            <li><strong>Tensor & matrix cores</strong>: Dedicated FP16/INT8 matrix multiply units for deep learning workloads</li>
+            <li><strong>Shader cores &amp; SIMD pipelines</strong>: Warp schedulers, register files, and execution units for GPGPU compute</li>
+            <li><strong>Tensor &amp; matrix cores</strong>: Dedicated FP16/INT8 matrix multiply units for deep learning workloads</li>
             <li><strong>2D/3D graphics engines</strong>: Rasterizers, framebuffer controllers, display pipelines, and video processing</li>
         </ul>
-        <p class="section-title">CPU</p>
+        <h3 class="section-title">CPU</h3>
         <ul>
             <li><strong>RISC-V cores</strong>: Single-cycle through superscalar out-of-order implementations, privilege modes, and ISA extensions</li>
-            <li><strong>ARM Cortex & custom ARM</strong>: Pipelined and multi-cycle ARM processors with SoC integration logic</li>
+            <li><strong>ARM Cortex &amp; custom ARM</strong>: Pipelined and multi-cycle ARM processors with SoC integration logic</li>
             <li><strong>MIPS architectures</strong>: Classic 5-stage pipelines, multi-cycle designs, and full ISA implementations</li>
             <li><strong>Custom ISA processors</strong>: 8-bit through 64-bit CPU designs, ALUs, branch predictors, and cache hierarchies</li>
             <li><strong>VLIW processors</strong>: Very Long Instruction Word architectures with multi-issue execution units, instruction bundling, and static scheduling</li>
         </ul>
-        <p class="section-title">SoC</p>
+        <h3 class="section-title">SoC</h3>
         <ul>
             <li><strong>Complete system-on-chip designs</strong>: Integrated CPU, memory, interconnect, peripheral, and accelerator subsystems in Verilog, VHDL, and SystemVerilog</li>
-            <li><strong>Bus fabrics & interconnects</strong>: AXI, AHB, APB, Wishbone, NoC, crossbar, arbitration, and bridge logic for multi-IP integration</li>
+            <li><strong>Bus fabrics &amp; interconnects</strong>: AXI, AHB, APB, Wishbone, NoC, crossbar, arbitration, and bridge logic for multi-IP integration</li>
             <li><strong>Platform peripherals</strong>: UART, SPI, I2C, GPIO, timers, interrupt controllers, DMA engines, boot ROMs, and memory-mapped control blocks</li>
         </ul>
-        <p class="section-title">DPU</p>
+        <h3 class="section-title">DPU</h3>
         <ul>
             <li><strong>Xilinx DPU inference engines</strong>: DPUCZDX8G and variant configurations for CNN inference on Zynq and ZCU platforms</li>
             <li><strong>Data processing units</strong>: DAG processing architectures, dual-clock domain processing, and memory pool controllers</li>
             <li><strong>Network-attached processing</strong>: SmartNIC-style offload engines for packet parsing, classification, and transformation</li>
         </ul>
-        <p class="section-title">MPU</p>
+        <h3 class="section-title">MPU</h3>
         <ul>
-            <li><strong>8-bit & 16-bit microprocessors</strong>: 8051, 6502, PIC, and AVR-compatible implementations in Verilog and VHDL</li>
+            <li><strong>8-bit &amp; 16-bit microprocessors</strong>: 8051, 6502, PIC, and AVR-compatible implementations in Verilog and VHDL</li>
             <li><strong>32-bit microcontrollers</strong>: ARM Cortex-M0 based SoCs, OpenMSP430 designs, and embedded processor cores</li>
             <li><strong>Microcomputer systems</strong>: Complete microprocessor designs with peripherals, memory controllers, and bus interfaces</li>
         </ul>
-        <p class="section-title">NPU</p>
+        <h3 class="section-title">NPU</h3>
         <ul>
             <li><strong>CNN accelerators</strong>: Convolutional neural network engines with configurable kernel sizes, pooling, and activation layers</li>
             <li><strong>Neural network processors</strong>: Spiking neural networks, MLP accelerators, and on-chip inference engines</li>
             <li><strong>Edge ML hardware</strong>: Low-power neural engines for always-on inference, keyword spotting, and image classification</li>
         </ul>
-        <p class="section-title">ASIC</p>
+        <h3 class="section-title">ASIC</h3>
         <ul>
             <li><strong>Complete ASIC flows</strong>: RTL-to-GDSII designs including synthesis, place-and-route, and signoff for tapeout</li>
-            <li><strong>Standard cell & physical design</strong>: Cell libraries, floorplanning, power grid synthesis, and timing closure at advanced nodes</li>
+            <li><strong>Standard cell &amp; physical design</strong>: Cell libraries, floorplanning, power grid synthesis, and timing closure at advanced nodes</li>
             <li><strong>Application-specific designs</strong>: Custom cryptographic engines, DSP blocks, communication controllers, and sensor interfaces</li>
         </ul>
-        <p class="section-title">MCU</p>
+        <h3 class="section-title">MCU</h3>
         <ul>
-            <li><strong>8051 & legacy cores</strong>: Classic 8051 implementations, turbo variants, and embedded cryptosystem integrations in Verilog and VHDL</li>
-            <li><strong>RISC-V & ARM Cortex-M MCUs</strong>: Soft microcontroller SoCs with APB/AHB buses, GPIO, UART, SPI, I2C, timers, and interrupt controllers</li>
-            <li><strong>Peripheral & IO subsystems</strong>: Standalone UART, SPI, I2C, GPIO, watchdog, and PWM timer IP blocks for embedded integration</li>
+            <li><strong>8051 &amp; legacy cores</strong>: Classic 8051 implementations, turbo variants, and embedded cryptosystem integrations in Verilog and VHDL</li>
+            <li><strong>RISC-V &amp; ARM Cortex-M MCUs</strong>: Soft microcontroller SoCs with APB/AHB buses, GPIO, UART, SPI, I2C, timers, and interrupt controllers</li>
+            <li><strong>Peripheral &amp; IO subsystems</strong>: Standalone UART, SPI, I2C, GPIO, watchdog, and PWM timer IP blocks for embedded integration</li>
         </ul>
-        <p class="section-title">FPGA</p>
+        <h3 class="section-title">FPGA</h3>
         <ul>
-            <li><strong>Xilinx & Intel/Altera platforms</strong>: Vivado and Quartus project files, IP integrations, and board-level designs across device families</li>
+            <li><strong>Xilinx &amp; Intel/Altera platforms</strong>: Vivado and Quartus project files, IP integrations, and board-level designs across device families</li>
             <li><strong>FPGA-based accelerators</strong>: CNN inference, cryptomining, signal processing, and high-speed data acquisition on reconfigurable fabric</li>
-            <li><strong>Prototyping & IP cores</strong>: Reusable FPGA IP for Ethernet, USB, HDMI, SDRAM, SPI, I2C, UART, and PCIe interfaces</li>
+            <li><strong>Prototyping &amp; IP cores</strong>: Reusable FPGA IP for Ethernet, USB, HDMI, SDRAM, SPI, I2C, UART, and PCIe interfaces</li>
         </ul>
-        <p style="font-size: 1.5rem; font-weight: bold; margin-top: 1rem;">Waveform & Signal Processing:</p>
-        <p class="section-title">Oscilloscopes</p>
+        <h2 class="group-title">Waveform &amp; Signal Processing</h2>
+        <h3 class="section-title">Oscilloscopes</h3>
         <ul>
             <li><strong>FPGA-based digital oscilloscopes</strong>: Complete acquisition systems with ADC interfaces, trigger logic, and VGA/HDMI display on Xilinx Zynq, Artix, and Intel Cyclone platforms</li>
             <li><strong>Mixed-signal scopes</strong>: Combined analog and logic analyzer designs with FFT analysis, multi-channel capture, and Ethernet/USB readout</li>
         </ul>
-        <p class="section-title">ADC</p>
+        <h3 class="section-title">ADC</h3>
         <ul>
             <li><strong>SAR ADC</strong>: Successive approximation register converters from 8-bit to 16-bit, including tapeout-ready designs targeting Sky130 and Efabless flows</li>
             <li><strong>Delta-Sigma ADC</strong>: Oversampling converters with decimation filters for high-resolution audio and sensor applications</li>
             <li><strong>Xilinx XADC integrations</strong>: Hard-block analog-to-digital configurations across Arty, Basys, Nexys, and Zybo board families</li>
         </ul>
-        <p class="section-title">DAC</p>
+        <h3 class="section-title">DAC</h3>
         <ul>
-            <li><strong>R2R ladder & Sigma-Delta DAC</strong>: Resistor-network and noise-shaped digital-to-analog converters for audio and waveform output</li>
-            <li><strong>MASH & modulated DAC</strong>: Multi-stage noise-shaping architectures and shift-modulated sigma-delta designs, including TinyTapeout variants</li>
+            <li><strong>R2R ladder &amp; Sigma-Delta DAC</strong>: Resistor-network and noise-shaped digital-to-analog converters for audio and waveform output</li>
+            <li><strong>MASH &amp; modulated DAC</strong>: Multi-stage noise-shaping architectures and shift-modulated sigma-delta designs, including TinyTapeout variants</li>
         </ul>
-        <p class="section-title">DDS & Waveform Generation</p>
+        <h3 class="section-title">DDS &amp; Waveform Generation</h3>
         <ul>
             <li><strong>Direct Digital Synthesizers</strong>: CORDIC-based and LUT-based DDS engines with configurable frequency, phase, and amplitude for sine, square, triangle, and arbitrary waveforms</li>
             <li><strong>Arbitrary waveform generators</strong>: Function generators with UART/SPI control, multi-channel output, and DDS-FIR filter integration</li>
         </ul>
-        <p class="section-title">Simulation & Waveform Tooling</p>
+        <h3 class="section-title">Simulation &amp; Waveform Tooling</h3>
         <ul>
-            <li><strong>VCD, FST & FSDB waveform flows</strong>: Complete RTL simulation pipelines with Icarus Verilog, Verilator, GHDL, GTKWave, and Verdi/Synopsys FSDB for waveform capture and analysis</li>
+            <li><strong>VCD, FST &amp; FSDB waveform flows</strong>: Complete RTL simulation pipelines with Icarus Verilog, Verilator, GHDL, GTKWave, and Verdi/Synopsys FSDB for waveform capture and analysis</li>
             <li><strong>Testbench waveform generation</strong>: Stimulus-from-VCD converters, automated waveform comparison, and CI-integrated simulation templates</li>
         </ul>
-        <p style="font-size: 1.5rem; font-weight: bold; margin-top: 1rem;">For training AI on chip design:</p>
-        <p class="section-title">Pre-training</p>
+        <h2 class="group-title">For training AI on chip design</h2>
+        <h3 class="section-title">Pre-training</h3>
         <ul>
             <li><strong>Curated RTL corpus</strong>: Verilog, VHDL, and SystemVerilog organized for language model pre-training on hardware design</li>
             <li><strong>Full project context</strong>: Not just isolated modules, but complete designs with testbenches, constraints, Makefiles, and documentation</li>
             <li><strong>Architecture diversity</strong>: Processors, accelerators, interconnects, memory controllers, and peripherals spanning every major chip category</li>
             <li><strong>EDA tool flows</strong>: Synthesis scripts, OpenROAD/Yosys/OpenLane configurations, and physical design collateral</li>
         </ul>
-        <p class="section-title">Post-training (RL Environments)</p>
+        <h3 class="section-title">Post-training (RL Environments)</h3>
         <p>
             Individual RLVR tasks range from <strong>$100 to $1,000 each</strong>, with pricing varying greatly based on task depth, verification breadth, hidden mutation coverage, toolchain requirements, and trajectory complexity.
         </p>
@@ -153,14 +167,49 @@
             <li><strong>Open-source reward verification</strong>: Verilator, Yosys, cocotb, Icarus Verilog, GHDL, GTKWave, OpenROAD, and OpenLane compile, simulate, synthesize, inspect waveforms, and measure implementation results so rewards are grounded in executable hardware behavior</li>
             <li><strong>Custom UVM trajectory ports</strong>: Purpose-built UVM ports replay and verify full SystemVerilog trajectories—including intermediate edits, assertions, testbench interactions, coverage, and final RTL—across the entire codebase</li>
             <li><strong>Multi-signal reward gates</strong>: Functional correctness, compilation, simulation, synthesis, area, power, timing, coverage, and waveform agreement produce deterministic pass/fail and graded rewards</li>
-            <li><strong>Benchmark circuits</strong>: Reference designs and known-good implementations for evaluating generated RTL quality</li>
+            <li><strong>Evaluation and reference circuits</strong>: Reference designs and known-good implementations for evaluating generated RTL quality</li>
         </ul>
+        <section class="product-card" id="sample" aria-labelledby="sample-title">
+            <h2 id="sample-title">SoC Design + Verification RLVR Diagnostic Sample — 5 Tasks</h2>
+            <p class="price"><strong>$1,000 USD one-time purchase</strong></p>
+            <p>Stripe displays the exact total before you authorize payment.</p>
+            <p>
+                A compact, integrity-verified diagnostic sample spanning UART, memory, and RV32 CPU work. It contains three RTL design/repair tasks and two verification-authoring tasks built around Verilog/SystemVerilog, Python, cocotb, Icarus Verilog, Verilator, and Yosys.
+            </p>
+            <h3>Included</h3>
+            <ul>
+                <li>Five public task bundles with specifications, editable starter files, Makefiles, and public tests</li>
+                <li>Task metadata, locked reward contracts, environment requirements, provenance, and admission summaries</li>
+                <li>Protocol and trajectory schemas, aggregate diagnostic results, and sanitized per-snapshot reward trajectories from one fresh attempt per task</li>
+                <li>A SHA-256 manifest for file-integrity verification</li>
+            </ul>
+            <h3>Not included</h3>
+            <ul>
+                <li>Private graders, hidden tests or mutation banks, gold solutions, or completed model solutions</li>
+                <li>Raw agent messages, candidate diffs, provider thread or receipt IDs, credentials, or private toolchain images</li>
+                <li>A turnkey hidden-reward runtime or permission to present the results as a production benchmark</li>
+            </ul>
+            <p>
+                The download includes MIT- and Apache-2.0-licensed material, with the applicable copyright and license notices preserved. The purchase covers task design and hardening, curation, packaging, metadata, and diagnostic evidence; it does not convert open-source components into proprietary software.
+            </p>
+            <form action="/api/create-checkout-session" method="post" id="sample-checkout-form">
+                <input type="hidden" name="attempt_id" id="checkout-attempt-id" value="">
+                <input type="hidden" name="terms_version" value="1.0.0">
+                <label class="terms-check">
+                    <input type="checkbox" name="terms_accepted" value="yes" required>
+                    I have reviewed and accept the <a href="/sample-license">sample license and limitations</a>, <a href="/refund-policy">digital delivery and refund policy</a>, and <a href="/privacy">privacy notice</a>.
+                </label>
+                <button type="submit" class="purchase-btn" id="purchase-button" disabled>JavaScript required for checkout</button>
+                <p class="store-status" id="store-status" aria-live="polite">Enable JavaScript to check secure checkout availability, or email <a href="mailto:root@puul.ai">root@puul.ai</a> for help.</p>
+            </form>
+            <p class="fine-print">Secure card checkout via Stripe. Payment confirmation, private access email, and download delivery are automated through Cloudflare. Browser access lasts 12 hours; the emailed redemption link lasts 30 days. If it expires while the payment remains active, contact us from the checkout email address for reissue.</p>
+        </section>
         <p style="font-style: italic; font-size: 1.35rem;">Additional architectures and flow categories available for review.</p>
         <div class="contact">
             Contact us via:<br>
             Email: <a href="mailto:root@puul.ai" class="contact-btn">root@puul.ai</a><br>
             Signal/text: <a href="sms:+16508809229" class="contact-btn">650-880-9229</a>
         </div>
-    </div>
+    </main>
 </body>
 </html>

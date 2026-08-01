@@ -1,0 +1,22 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "rtldatasets-com-staging",
+  "main": "./worker/index.js",
+  "compatibility_date": "2026-08-01",
+  "workers_dev": true,
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page",
+    "run_worker_first": ["/api/*", "/purchase-access", "/purchase-access/*", "/purchase-success", "/purchase-success/*"]
+  },
+  "vars": {
+    "STORE_LIVE": "false",
+    "SITE_URL": "https://rtldatasets-com-staging.yousefsalem00.workers.dev"
+  },
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}
