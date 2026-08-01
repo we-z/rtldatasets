@@ -3,7 +3,7 @@ export const PRODUCT = Object.freeze({
   sku: 'SOC-DV-RLVR-DIAG-5-V1',
   artifactVersion: '1.0.0',
   sampleId: 'soc-dv-gpt-5.3-codex-spark-shakedown-v1',
-  name: 'SoC Design + Verification RLVR Diagnostic Sample — 5 Tasks',
+  name: 'SoC Design + Verification RLVR Evaluation Sample: 5 Tasks',
   archiveFilename: 'soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz',
   priceCents: 100_000,
   currency: 'usd',

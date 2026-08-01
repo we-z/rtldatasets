@@ -1,7 +1,7 @@
 # rtldatasets.com
 
 Static landing pages and a Cloudflare Worker for selling the five-task SoC
-Design + Verification RLVR Diagnostic Sample.
+Design + Verification RLVR Evaluation Sample.
 
 ## Architecture
 

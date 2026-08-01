@@ -1,11 +1,11 @@
-# SoC Design + Verification RLVR Diagnostic Sample — 5 Tasks
+# SoC Design + Verification RLVR Evaluation Sample: 5 Tasks
 
 - Product ID: `soc-dv-rlvr-diagnostic-sample-5-task`
 - SKU: `SOC-DV-RLVR-DIAG-5-V1`
 - Artifact version: `1.0.0`
 - Sample ID: `soc-dv-gpt-5.3-codex-spark-shakedown-v1`
 
-This is a compact, integrity-verified diagnostic sample spanning UART, memory,
+This is a compact, integrity-verified evaluation sample spanning UART, memory,
 and RV32 CPU work. It contains three RTL design/repair tasks and two
 verification-authoring tasks built around Verilog/SystemVerilog, Python,
 cocotb, Icarus Verilog, Verilator, and Yosys.
@@ -16,7 +16,7 @@ cocotb, Icarus Verilog, Verilator, and Yosys.
   Makefiles, and public tests.
 - Task metadata, locked reward contracts, environment requirements,
   provenance, and admission summaries.
-- Protocol and trajectory schemas, aggregate diagnostic results, and sanitized
+- Protocol and trajectory schemas, aggregate evaluation results, and sanitized
   per-snapshot reward/component trajectories from one fresh attempt per task.
 - `MANIFEST.sha256`, covering every other regular file in this archive.
 - Per-task license files and a consolidated third-party notice.
@@ -30,7 +30,7 @@ cocotb, Icarus Verilog, Verilator, and Yosys.
 - A turnkey hidden-reward runtime. The hidden reward cannot be reproduced from
   this download alone.
 
-This is a diagnostic sample, not a production benchmark or a guarantee of model
+This is an evaluation sample, not a production benchmark or a guarantee of model
 performance. The included results must not be presented as production benchmark
 results.
 

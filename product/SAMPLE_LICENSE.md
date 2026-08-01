@@ -1,22 +1,22 @@
 # Sample license and limitations
 
-Version 1.0.0 — effective August 1, 2026
+Version 1.0.0, effective August 1, 2026
 
-These terms apply to the $1,000 USD SoC Design + Verification RLVR Diagnostic
-Sample — 5 Tasks (the “Sample”). By purchasing the Sample, the purchaser
+These terms apply to the $1,000 USD SoC Design + Verification RLVR Evaluation
+Sample: 5 Tasks (the “Sample”). By purchasing the Sample, the purchaser
 accepts these terms.
 
 ## License for RTL Datasets materials
 
 The operator of RTL Datasets grants the purchaser a non-exclusive,
 non-transferable license to use and modify the operator-authored task packaging,
-curation, metadata, schemas, verification contracts, and diagnostic evidence
+curation, metadata, schemas, verification contracts, and evaluation evidence
 internally for evaluation, research, and model development. Trained models and
 model outputs created by the purchaser remain the purchaser's.
 
 The purchaser may not resell or redistribute the operator-authored materials as
 a standalone dataset or competing task package, remove applicable notices, or
-use the diagnostic results to claim that the Sample is a production benchmark.
+use the evaluation results to claim that the Sample is a production benchmark.
 
 ## Open-source material
 
@@ -26,7 +26,7 @@ and take precedence over these terms where applicable. The purchase does not
 grant exclusive ownership of third-party material or reduce rights already
 provided by an open-source license.
 
-## Diagnostic limitations
+## Evaluation limitations
 
 The Sample does not include private graders, hidden tests or mutation banks,
 gold solutions, completed model solutions, raw agent messages, credentials, or

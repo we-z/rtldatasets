@@ -39,9 +39,9 @@
     "SITE_URL": "https://www.rtldatasets.com",
     "STRIPE_MODE": "live",
     "STRIPE_AUTOMATIC_TAX": "false",
-    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/291dfded5461f230353db9ab13992079b78f12532409d5d64af7dfdc7c6ed41f/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz",
-    "SAMPLE_ARCHIVE_SHA256": "291dfded5461f230353db9ab13992079b78f12532409d5d64af7dfdc7c6ed41f",
-    "SAMPLE_ARCHIVE_BYTES": "69675"
+    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz",
+    "SAMPLE_ARCHIVE_SHA256": "ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc",
+    "SAMPLE_ARCHIVE_BYTES": "69768"
   },
   "observability": {
     "enabled": true,
