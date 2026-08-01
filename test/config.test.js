@@ -9,17 +9,16 @@ function environment() {
     STORE_LIVE: 'true',
     SITE_URL: 'https://www.rtldatasets.com',
     STRIPE_SECRET_KEY: 'sk_test_example',
+    STRIPE_MODE: 'test',
     STRIPE_WEBHOOK_SECRET: 'whsec_example',
     STRIPE_SAMPLE_PRICE_ID: 'price_example',
     STRIPE_AUTOMATIC_TAX: 'false',
     ENTITLEMENT_SIGNING_SECRET: 'a-signing-secret-that-is-more-than-32-bytes',
     SAMPLE_ARCHIVE_SHA256: sha,
-    SAMPLE_R2_KEY: `artifacts/product/v1/sha256/${sha}/${PRODUCT.archiveFilename}`,
+    SAMPLE_ASSET_PATH: `/__private/artifacts/product/v1/sha256/${sha}/${PRODUCT.archiveFilename}`,
     SAMPLE_ARCHIVE_BYTES: '12345',
-    FULFILLMENT_FROM_EMAIL: 'delivery@rtldatasets.com',
     ORDERS: {},
-    PRODUCTS: {},
-    EMAIL: {},
+    ASSETS: {},
     CHECKOUT_RATE_LIMITER: {},
   };
 }
@@ -37,12 +36,27 @@ test('store live flag and missing bindings fail closed', () => {
   env.STORE_LIVE = 'false';
   assert.deepEqual(getStoreAvailability(env), { available: false });
   env.STORE_LIVE = 'true';
-  delete env.PRODUCTS;
+  delete env.ASSETS;
   assert.deepEqual(getStoreAvailability(env), { available: false });
 });
 
-test('artifact key must contain the exact content hash', () => {
+test('artifact path must be private and contain the exact content hash', () => {
   const env = environment();
-  env.SAMPLE_R2_KEY = `artifacts/product/v1/sha256/${'c'.repeat(64)}/${PRODUCT.archiveFilename}`;
+  env.SAMPLE_ASSET_PATH = `/__private/artifacts/product/v1/sha256/${'c'.repeat(64)}/${PRODUCT.archiveFilename}`;
   assert.throws(() => getStoreConfig(env));
+
+  env.SAMPLE_ASSET_PATH = `/public/artifacts/product/v1/sha256/${'b'.repeat(64)}/${PRODUCT.archiveFilename}`;
+  assert.throws(() => getStoreConfig(env));
+});
+
+test('Stripe credentials must match the explicitly configured mode', () => {
+  const env = environment();
+  env.STRIPE_MODE = 'live';
+  assert.throws(() => getStoreConfig(env), /Stripe key does not match STRIPE_MODE/u);
+
+  env.STRIPE_SECRET_KEY = 'rk_live_example';
+  assert.equal(getStoreConfig(env).stripeLivemode, true);
+
+  env.STRIPE_MODE = 'production';
+  assert.throws(() => getStoreConfig(env), /STRIPE_MODE must be live or test/u);
 });

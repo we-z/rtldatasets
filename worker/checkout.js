@@ -5,6 +5,7 @@ import { validateFixedPrice } from './entitlement.js';
 import { loadVerifiedArtifact } from './artifact.js';
 import { assertMethod, assertSameOrigin, HttpError, readUrlEncodedForm, redirect } from './http.js';
 import {
+  checkoutCookieName,
   checkoutStatePayload,
   cookieNames,
   serializeCookie,
@@ -38,7 +39,7 @@ export async function createCheckout(request, env) {
     sku: PRODUCT.sku,
     artifact_version: PRODUCT.artifactVersion,
     artifact_sha256: config.artifactSha256,
-    artifact_r2_key: config.artifactR2Key,
+    artifact_asset_path: config.artifactAssetPath,
     terms_version: PRODUCT.termsVersion,
   };
   const session = await stripe.checkout.sessions.create({
@@ -54,7 +55,7 @@ export async function createCheckout(request, env) {
       metadata,
     },
     automatic_tax: { enabled: config.automaticTax },
-    success_url: `${config.siteOrigin}/api/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+    success_url: `${config.siteOrigin}/purchase-complete?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${config.siteOrigin}/?checkout=cancelled#sample`,
   }, {
     idempotencyKey: `checkout:${PRODUCT.sku}:${attemptId}`,
@@ -67,10 +68,11 @@ export async function createCheckout(request, env) {
   }
 
   const names = cookieNames(config.siteOrigin);
+  const checkoutCookie = checkoutCookieName(config.siteOrigin, attemptId);
   const stateToken = await signToken(checkoutStatePayload(attemptId), config.signingSecret);
   return redirect(session.url, 303, {
     'Set-Cookie': serializeCookie(
-      names.checkout,
+      checkoutCookie,
       stateToken,
       TOKEN_LIFETIMES.checkoutStateSeconds,
       names.secure,

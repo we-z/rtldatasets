@@ -4,17 +4,15 @@ SITE_URL=https://www.rtldatasets.com
 
 # Stripe server credentials and the fixed one-time $1,000 Price.
 STRIPE_SECRET_KEY=
+STRIPE_MODE=test
 STRIPE_WEBHOOK_SECRET=
 STRIPE_SAMPLE_PRICE_ID=
 STRIPE_AUTOMATIC_TAX=false
 
-# At least 32 random bytes, used to sign checkout, redemption, and access tokens.
+# At least 32 random bytes, used to sign checkout and access tokens.
 ENTITLEMENT_SIGNING_SECRET=
 
-# The paid archive stays in a private R2 bucket and is streamed by the Worker.
-SAMPLE_R2_KEY=
+# The paid archive is deployed as a protected Worker static asset outside Git.
+SAMPLE_ASSET_PATH=
 SAMPLE_ARCHIVE_SHA256=
 SAMPLE_ARCHIVE_BYTES=
-
-# Cloudflare Email Service sender. The domain must be onboarded for sending.
-FULFILLMENT_FROM_EMAIL=delivery@rtldatasets.com

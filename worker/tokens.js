@@ -4,6 +4,8 @@ import { HttpError } from './http.js';
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 
+export const MAX_RECENT_ATTEMPTS = 20;
+
 function bytesToBase64Url(bytes) {
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
@@ -84,6 +86,19 @@ export function validCheckoutSessionId(value) {
   return typeof value === 'string' && /^cs_(?:test_|live_)?[A-Za-z0-9]{12,200}$/u.test(value);
 }
 
+export function recentAttemptsContain(values, expectedAttemptId) {
+  return validRecentAttempts(values) &&
+    values.includes(expectedAttemptId);
+}
+
+export function validRecentAttempts(values) {
+  return Array.isArray(values) &&
+    values.length > 0 &&
+    values.length <= MAX_RECENT_ATTEMPTS &&
+    values.every((value) => validAttemptId(value)) &&
+    new Set(values.map((value) => value.toLowerCase())).size === values.length;
+}
+
 export function checkoutStatePayload(attemptId, nowSeconds = Math.floor(Date.now() / 1000)) {
   return {
     v: 1,
@@ -104,23 +119,19 @@ export function entitlementPayload(sessionId, nowSeconds = Math.floor(Date.now()
   };
 }
 
-export function redeemPayload(sessionId, expiresAt) {
-  return {
-    v: 1,
-    purpose: 'redeem',
-    sku: PRODUCT.sku,
-    sessionId,
-    exp: expiresAt,
-  };
-}
-
 export function cookieNames(siteOrigin) {
   const secure = new URL(siteOrigin).protocol === 'https:';
   return {
     secure,
-    checkout: secure ? '__Host-rtl_checkout_state' : 'rtl_checkout_state',
     entitlement: secure ? '__Host-rtl_entitlement' : 'rtl_entitlement',
   };
+}
+
+export function checkoutCookieName(siteOrigin, attemptId) {
+  if (!validAttemptId(attemptId)) throw new HttpError(400, 'invalid_checkout_attempt');
+  const secure = new URL(siteOrigin).protocol === 'https:';
+  const suffix = attemptId.replaceAll('-', '').toLowerCase();
+  return secure ? `__Host-rtl_checkout_${suffix}` : `rtl_checkout_${suffix}`;
 }
 
 export function readCookie(request, name) {

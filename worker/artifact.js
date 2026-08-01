@@ -5,19 +5,20 @@ function bytesToHex(bytes) {
 }
 
 export async function loadVerifiedArtifact(env, config) {
-  let object;
+  let asset;
   try {
-    object = await env.PRODUCTS.get(config.artifactR2Key);
+    const assetUrl = new URL(config.artifactAssetPath, config.siteOrigin);
+    asset = await env.ASSETS.fetch(new Request(assetUrl, { method: 'GET' }));
   } catch {
     throw new HttpError(503, 'artifact_unavailable');
   }
-  if (!object || object.size !== config.archiveBytes) {
+  if (!asset?.ok) {
     throw new HttpError(503, 'artifact_unavailable');
   }
 
   let bytes;
   try {
-    bytes = await object.arrayBuffer();
+    bytes = await asset.arrayBuffer();
   } catch {
     throw new HttpError(503, 'artifact_unavailable');
   }
@@ -29,5 +30,5 @@ export async function loadVerifiedArtifact(env, config) {
     throw new HttpError(503, 'artifact_integrity_failed');
   }
 
-  return { object, bytes };
+  return { asset, bytes };
 }

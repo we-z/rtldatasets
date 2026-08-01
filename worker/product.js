@@ -12,7 +12,8 @@ export const PRODUCT = Object.freeze({
 });
 
 export const TOKEN_LIFETIMES = Object.freeze({
-  checkoutStateSeconds: 30 * 60,
+  checkoutStateSeconds: 24 * 60 * 60,
+  browserRecoverySeconds: 7 * 24 * 60 * 60,
   entitlementSeconds: 12 * 60 * 60,
   redeemSeconds: 30 * 24 * 60 * 60,
 });

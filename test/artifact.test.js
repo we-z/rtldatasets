@@ -5,30 +5,27 @@ import { loadVerifiedArtifact } from '../worker/artifact.js';
 
 const content = new TextEncoder().encode('verified paid artifact');
 const config = {
-  artifactR2Key: 'artifacts/example.tar.gz',
+  siteOrigin: 'https://www.rtldatasets.com',
+  artifactAssetPath: '/__private/artifacts/example.tar.gz',
   archiveBytes: content.byteLength,
   artifactSha256: createHash('sha256').update(content).digest('hex'),
 };
 
 function environment(bytes = content) {
   return {
-    PRODUCTS: {
-      async get(key) {
-        assert.equal(key, config.artifactR2Key);
-        return {
-          size: bytes.byteLength,
-          async arrayBuffer() {
-            return bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
-          },
-        };
+    ASSETS: {
+      async fetch(request) {
+        assert.equal(new URL(request.url).pathname, config.artifactAssetPath);
+        return new Response(bytes, { headers: { ETag: '"verified-asset"' } });
       },
     },
   };
 }
 
-test('R2 artifact bytes must match the pinned size and SHA-256', async () => {
+test('protected asset bytes must match the pinned size and SHA-256', async () => {
   const result = await loadVerifiedArtifact(environment(), config);
   assert.equal(result.bytes.byteLength, content.byteLength);
+  assert.equal(result.asset.headers.get('ETag'), '"verified-asset"');
 
   const tampered = new TextEncoder().encode('tampered paid artifact');
   await assert.rejects(
@@ -37,9 +34,9 @@ test('R2 artifact bytes must match the pinned size and SHA-256', async () => {
   );
 });
 
-test('missing R2 artifacts fail closed', async () => {
+test('missing protected assets fail closed', async () => {
   await assert.rejects(
-    () => loadVerifiedArtifact({ PRODUCTS: { get: async () => null } }, config),
+    () => loadVerifiedArtifact({ ASSETS: { fetch: async () => new Response(null, { status: 404 }) } }, config),
     (error) => error?.publicCode === 'artifact_unavailable',
   );
 });

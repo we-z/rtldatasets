@@ -14,9 +14,10 @@
         <h2>Information processed</h2>
         <ul>
             <li>Stripe processes card and billing information. RTL Datasets does not receive or store full card numbers.</li>
-            <li>RTL Datasets stores the checkout email address, Stripe session/payment identifiers, purchased artifact version and checksum, delivery status, and download timestamps.</li>
-            <li>Essential signed cookies hold checkout state for up to 30 minutes and private download access for up to 12 hours. They are HTTP-only and are not used for advertising.</li>
-            <li>Cloudflare provides site hosting, private object storage, database storage, security, and transactional email delivery, and may process IP address, device, request, and security-log data while providing those services.</li>
+            <li>RTL Datasets stores the checkout email address, Stripe session/payment identifiers, purchased artifact version and checksum, access status, and download timestamps.</li>
+            <li>Essential HTTP-only signed cookies hold per-attempt checkout state for up to 24 hours and private download access for up to 12 hours. They are not used for advertising.</li>
+            <li>This browser stores random checkout attempt identifiers for up to seven days solely to recover an interrupted paid delivery. They contain no card number, billing details, email address, Stripe session identifier, or signed access token.</li>
+            <li>Cloudflare provides site hosting, protected asset storage, database storage, and security, and may process IP address, device, request, and security-log data while providing those services.</li>
         </ul>
         <h2>Sharing and retention</h2>
         <p>Information is shared with Stripe and Cloudflare only as needed to operate payment and fulfillment, or when legally required. Transaction and delivery records are retained for as long as reasonably necessary for accounting, security, support, and dispute handling.</p>

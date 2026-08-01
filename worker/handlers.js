@@ -1,9 +1,8 @@
 import { PRODUCT, TOKEN_LIFETIMES } from './product.js';
 import { getSiteOrigin, getStoreAvailability, getStoreConfig } from './config.js';
 import { createStripe, stripeCryptoProvider } from './stripe.js';
-import { loadPaidSession } from './entitlement.js';
-import { ensureDeliveryEmail } from './email.js';
-import { recordDownload, recordPurchase } from './database.js';
+import { loadPaidSession, validateBrowserRecovery } from './entitlement.js';
+import { findRecoverablePurchase, recordDownload, recordPurchase } from './database.js';
 import { loadVerifiedArtifact } from './artifact.js';
 import {
   assertMethod,
@@ -16,11 +15,14 @@ import {
   safeErrorCode,
 } from './http.js';
 import {
+  checkoutCookieName,
   cookieNames,
   entitlementPayload,
   readCookie,
+  recentAttemptsContain,
   serializeCookie,
   signToken,
+  validAttemptId,
   validCheckoutSessionId,
   verifyToken,
 } from './tokens.js';
@@ -35,42 +37,60 @@ function hexToBase64(hex) {
 
 export async function storeStatus(request, env) {
   assertMethod(request, 'GET');
-  let { available } = getStoreAvailability(env);
-  if (available) {
-    try {
-      await loadVerifiedArtifact(env, getStoreConfig(env));
-    } catch {
-      available = false;
-    }
-  }
+  const { available } = getStoreAvailability(env);
   return json({
     available,
     product: PRODUCT.name,
-    price: '$1,000',
-    currency: 'USD',
   });
 }
 
-export async function checkoutSuccess(request, env, ctx) {
-  assertMethod(request, 'GET');
+export async function checkoutSuccess(request, env) {
+  assertMethod(request, 'POST');
   const config = getStoreConfig(env);
-  const sessionId = new URL(request.url).searchParams.get('session_id');
+  assertSameOrigin(request, config.siteOrigin);
+  const form = await readUrlEncodedForm(request);
+  const sessionId = form.get('session_id');
   if (!validCheckoutSessionId(sessionId)) throw new HttpError(400, 'invalid_purchase');
 
-  const names = cookieNames(config.siteOrigin);
-  const stateToken = readCookie(request, names.checkout);
-  const state = await verifyToken(stateToken, 'checkout', config.signingSecret);
+  const rateKey = request.headers.get('CF-Connecting-IP') || 'unknown-client';
+  const rate = await env.CHECKOUT_RATE_LIMITER.limit({ key: `complete:${rateKey}` });
+  if (!rate.success) throw new HttpError(429, 'completion_rate_limited');
+
   const stripe = createStripe(config);
   const paid = await loadPaidSession(stripe, sessionId, config);
-  if (paid.session.client_reference_id !== state.attemptId) {
+  const attemptId = paid.session.client_reference_id;
+  if (!validAttemptId(attemptId)) throw new HttpError(403, 'invalid_purchase');
+  const names = cookieNames(config.siteOrigin);
+  const checkoutCookie = checkoutCookieName(config.siteOrigin, attemptId);
+  const stateToken = readCookie(request, checkoutCookie);
+  const browserAttempts = form.getAll('attempt_id');
+  let signedAttemptMatches = false;
+  if (stateToken) {
+    try {
+      const state = await verifyToken(stateToken, 'checkout', config.signingSecret);
+      signedAttemptMatches = attemptId === state.attemptId;
+    } catch {
+      signedAttemptMatches = false;
+    }
+  }
+  const browserAttemptMatches = recentAttemptsContain(browserAttempts, attemptId);
+  if (!signedAttemptMatches && !browserAttemptMatches) {
     throw new HttpError(403, 'invalid_purchase');
+  }
+  if (!signedAttemptMatches) {
+    validateBrowserRecovery(paid, browserAttempts);
   }
 
   await recordPurchase(env, paid, config);
-  ctx.waitUntil(ensureDeliveryEmail(env, paid, config).catch(() => undefined));
 
   const accessToken = await signToken(entitlementPayload(sessionId), config.signingSecret);
-  return redirect(`${config.siteOrigin}/purchase-success`, 303, {
+  return json({
+    complete: true,
+    redirect: '/purchase-success',
+    matchedAttemptIndex: browserAttempts.findIndex(
+      (value) => value.toLowerCase() === attemptId.toLowerCase(),
+    ),
+  }, 200, {
     'Set-Cookie': [
       serializeCookie(
         names.entitlement,
@@ -78,7 +98,64 @@ export async function checkoutSuccess(request, env, ctx) {
         TOKEN_LIFETIMES.entitlementSeconds,
         names.secure,
       ),
-      serializeCookie(names.checkout, '', 0, names.secure),
+      serializeCookie(checkoutCookie, '', 0, names.secure),
+    ],
+  });
+}
+
+export async function recoverPurchase(request, env, dependencies = {}) {
+  assertMethod(request, 'POST');
+  const config = getStoreConfig(env);
+  assertSameOrigin(request, config.siteOrigin);
+  const form = await readUrlEncodedForm(request);
+  const attemptIds = form.getAll('attempt_id');
+
+  const rateKey = request.headers.get('CF-Connecting-IP') || 'unknown-client';
+  const rate = await env.CHECKOUT_RATE_LIMITER.limit({ key: `recover:${rateKey}` });
+  if (!rate.success) throw new HttpError(429, 'recovery_rate_limited');
+
+  const findPurchase = dependencies.findRecoverablePurchase || findRecoverablePurchase;
+  const candidate = await findPurchase(env, attemptIds, config.stripeLivemode);
+  if (!candidate) return json({ recovered: false });
+
+  const paid = dependencies.loadPaidSession
+    ? await dependencies.loadPaidSession(candidate.checkout_session_id, config)
+    : await loadPaidSession(createStripe(config), candidate.checkout_session_id, config);
+  const attemptId = validateBrowserRecovery(
+    paid,
+    attemptIds,
+    dependencies.nowSeconds?.(),
+  );
+  if (
+    typeof candidate.checkout_attempt_id !== 'string' ||
+    candidate.checkout_attempt_id.toLowerCase() !== attemptId.toLowerCase()
+  ) {
+    throw new HttpError(403, 'invalid_purchase');
+  }
+  const savePurchase = dependencies.recordPurchase || recordPurchase;
+  await savePurchase(env, paid, config);
+
+  const names = cookieNames(config.siteOrigin);
+  const checkoutCookie = checkoutCookieName(config.siteOrigin, attemptId);
+  const accessToken = await signToken(
+    entitlementPayload(candidate.checkout_session_id),
+    config.signingSecret,
+  );
+  return json({
+    recovered: true,
+    redirect: '/purchase-success',
+    matchedAttemptIndex: attemptIds.findIndex(
+      (value) => value.toLowerCase() === attemptId.toLowerCase(),
+    ),
+  }, 200, {
+    'Set-Cookie': [
+      serializeCookie(
+        names.entitlement,
+        accessToken,
+        TOKEN_LIFETIMES.entitlementSeconds,
+        names.secure,
+      ),
+      serializeCookie(checkoutCookie, '', 0, names.secure),
     ],
   });
 }
@@ -123,31 +200,8 @@ export async function stripeWebhook(request, env) {
   if (!validCheckoutSessionId(eventSession.id)) throw new HttpError(400, 'invalid_event');
 
   const paid = await loadPaidSession(stripe, eventSession.id, config);
-  await ensureDeliveryEmail(env, paid, config);
-  return json({ received: true, fulfilled: true });
-}
-
-export async function redeemPurchase(request, env) {
-  assertMethod(request, 'POST');
-  const config = getStoreConfig(env);
-  assertSameOrigin(request, config.siteOrigin);
-  const form = await readUrlEncodedForm(request);
-  const token = form.get('token');
-  const payload = await verifyToken(token, 'redeem', config.signingSecret);
-  if (!validCheckoutSessionId(payload.sessionId)) throw new HttpError(401, 'invalid_access');
-
-  const paid = await loadPaidSession(createStripe(config), payload.sessionId, config);
   await recordPurchase(env, paid, config);
-  const accessToken = await signToken(entitlementPayload(payload.sessionId), config.signingSecret);
-  const names = cookieNames(config.siteOrigin);
-  return redirect(`${config.siteOrigin}/purchase-success`, 303, {
-    'Set-Cookie': serializeCookie(
-      names.entitlement,
-      accessToken,
-      TOKEN_LIFETIMES.entitlementSeconds,
-      names.secure,
-    ),
-  });
+  return json({ received: true, fulfilled: true });
 }
 
 export function protectedFormAsset(response) {
@@ -158,11 +212,6 @@ export function protectedFormAsset(response) {
     statusText: response.statusText,
     headers,
   });
-}
-
-export async function purchaseAccessPage(request, env) {
-  assertMethod(request, 'GET');
-  return protectedFormAsset(await env.ASSETS.fetch(request));
 }
 
 export async function purchaseSuccessPage(request, env) {
@@ -187,19 +236,20 @@ export async function downloadSample(request, env, ctx) {
   if (!validCheckoutSessionId(payload.sessionId)) throw new HttpError(401, 'invalid_access');
 
   await loadPaidSession(createStripe(config), payload.sessionId, config);
-  const { object, bytes } = await loadVerifiedArtifact(env, config);
+  const { asset, bytes } = await loadVerifiedArtifact(env, config);
 
   ctx.waitUntil(recordDownload(env, payload.sessionId).catch(() => undefined));
   const headers = new Headers({
     ...NO_STORE_HEADERS,
     'Content-Type': 'application/gzip',
     'Content-Disposition': `attachment; filename="${PRODUCT.archiveFilename}"`,
-    'Content-Length': String(object.size),
+    'Content-Length': String(config.archiveBytes),
     'Accept-Ranges': 'none',
     Digest: `sha-256=${hexToBase64(config.artifactSha256)}`,
     'X-Artifact-SHA256': config.artifactSha256,
   });
-  if (object.httpEtag) headers.set('ETag', object.httpEtag);
+  const etag = asset.headers.get('ETag');
+  if (etag) headers.set('ETag', etag);
   return new Response(bytes, { status: 200, headers });
 }
 
@@ -218,6 +268,9 @@ export function publicErrorResponse(request, env, error) {
   }
   if (path === '/api/store-status') {
     return json({ available: false }, status);
+  }
+  if (path === '/api/checkout-success' || path === '/api/recover-purchase') {
+    return json({ error: publicCode }, status);
   }
   let siteOrigin;
   try {

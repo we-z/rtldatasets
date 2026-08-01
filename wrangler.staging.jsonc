@@ -9,11 +9,12 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*", "/purchase-access", "/purchase-access/*", "/purchase-success", "/purchase-success/*"]
+    "run_worker_first": ["/api/*", "/__private/*", "/purchase-success", "/purchase-success/*"]
   },
   "vars": {
     "STORE_LIVE": "false",
-    "SITE_URL": "https://rtldatasets-com-staging.yousefsalem00.workers.dev"
+    "SITE_URL": "https://rtldatasets-com-staging.yousefsalem00.workers.dev",
+    "STRIPE_MODE": "test"
   },
   "observability": {
     "enabled": true,

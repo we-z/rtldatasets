@@ -9,6 +9,7 @@ node_modules/
 
 # Paid product archives must never enter the public repository.
 artifacts/
+.worker-assets/
 *.tar
 *.tar.gz
 *.tgz

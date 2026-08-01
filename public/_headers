@@ -10,10 +10,10 @@
   Cache-Control: private, no-store, max-age=0
   X-Robots-Tag: noindex, nofollow
 
-/purchase-error
+/purchase-complete
   Cache-Control: private, no-store, max-age=0
   X-Robots-Tag: noindex, nofollow
 
-/purchase-access
+/purchase-error
   Cache-Control: private, no-store, max-age=0
   X-Robots-Tag: noindex, nofollow

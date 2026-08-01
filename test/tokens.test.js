@@ -1,9 +1,12 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  checkoutCookieName,
   checkoutStatePayload,
   cookieNames,
   entitlementPayload,
+  MAX_RECENT_ATTEMPTS,
+  recentAttemptsContain,
   serializeCookie,
   signToken,
   validAttemptId,
@@ -39,7 +42,11 @@ test('identifier validators accept only expected shapes', () => {
 
 test('production cookies use __Host, Secure, HttpOnly, and Lax', () => {
   const names = cookieNames('https://www.rtldatasets.com');
-  assert.equal(names.checkout, '__Host-rtl_checkout_state');
+  const checkoutName = checkoutCookieName(
+    'https://www.rtldatasets.com',
+    '123e4567-e89b-42d3-a456-426614174000',
+  );
+  assert.match(checkoutName, /^__Host-rtl_checkout_[a-f0-9]{32}$/u);
   const serialized = serializeCookie(names.entitlement, 'token', 300, names.secure);
   assert.match(serialized, /Secure/u);
   assert.match(serialized, /HttpOnly/u);
@@ -50,7 +57,35 @@ test('production cookies use __Host, Secure, HttpOnly, and Lax', () => {
 
 test('localhost cookies do not silently use the production name', () => {
   const names = cookieNames('http://localhost:8787');
+  const checkoutName = checkoutCookieName(
+    'http://localhost:8787',
+    '123e4567-e89b-42d3-a456-426614174000',
+  );
   assert.equal(names.secure, false);
   assert.equal(names.entitlement, 'rtl_entitlement');
+  assert.doesNotMatch(checkoutName, /^__Host-/u);
   assert.doesNotMatch(serializeCookie(names.entitlement, 'token', 300, false), /Secure/u);
+});
+
+test('concurrent checkout attempts use distinct 24-hour state cookies', () => {
+  const first = '123e4567-e89b-42d3-a456-426614174000';
+  const second = '123e4567-e89b-42d3-b456-426614174001';
+  assert.notEqual(
+    checkoutCookieName('https://www.rtldatasets.com', first),
+    checkoutCookieName('https://www.rtldatasets.com', second),
+  );
+  const payload = checkoutStatePayload(first, 1_000);
+  assert.equal(payload.exp, 1_000 + (24 * 60 * 60));
+});
+
+test('same-browser recovery accepts only a bounded list of valid recent attempts', () => {
+  const expected = '123e4567-e89b-42d3-a456-426614174000';
+  const attempts = Array.from({ length: MAX_RECENT_ATTEMPTS }, (_, index) =>
+    `00000000-0000-4000-8000-${index.toString(16).padStart(12, '0')}`);
+  assert.equal(recentAttemptsContain([expected], expected), true);
+  assert.equal(recentAttemptsContain(attempts, attempts.at(-1)), true);
+  assert.equal(recentAttemptsContain(['invalid', expected], expected), false);
+  assert.equal(recentAttemptsContain([...attempts, expected], expected), false);
+  assert.equal(recentAttemptsContain([expected, expected], expected), false);
+  assert.equal(recentAttemptsContain([], expected), false);
 });

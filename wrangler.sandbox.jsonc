@@ -1,15 +1,9 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "rtldatasets-com",
+  "name": "rtldatasets-com-sandbox",
   "main": "./worker/index.js",
   "compatibility_date": "2026-08-01",
-  "workers_dev": false,
-  "routes": [
-    {
-      "pattern": "www.rtldatasets.com",
-      "custom_domain": true
-    }
-  ],
+  "workers_dev": true,
   "assets": {
     "directory": "./.worker-assets",
     "binding": "ASSETS",
@@ -20,14 +14,14 @@
   "d1_databases": [
     {
       "binding": "ORDERS",
-      "database_name": "rtldatasets-orders",
-      "database_id": "5f8f3805-b0bd-4a41-be68-d7fda360d7a4"
+      "database_name": "rtldatasets-orders-sandbox",
+      "database_id": "e01b0cc8-70f6-4691-8501-8bbb78270c41"
     }
   ],
   "ratelimits": [
     {
       "name": "CHECKOUT_RATE_LIMITER",
-      "namespace_id": "240801001",
+      "namespace_id": "240801002",
       "simple": {
         "limit": 10,
         "period": 60
@@ -36,8 +30,8 @@
   ],
   "vars": {
     "STORE_LIVE": "true",
-    "SITE_URL": "https://www.rtldatasets.com",
-    "STRIPE_MODE": "live",
+    "SITE_URL": "https://rtldatasets-com-sandbox.yousefsalem00.workers.dev",
+    "STRIPE_MODE": "test",
     "STRIPE_AUTOMATIC_TAX": "false",
     "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/291dfded5461f230353db9ab13992079b78f12532409d5d64af7dfdc7c6ed41f/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz",
     "SAMPLE_ARCHIVE_SHA256": "291dfded5461f230353db9ab13992079b78f12532409d5d64af7dfdc7c6ed41f",

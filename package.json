@@ -8,13 +8,16 @@
   },
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "npm test && npm run verify:worker-assets && wrangler deploy",
+    "deploy:sandbox": "npm test && npm run verify:worker-assets && wrangler deploy --config wrangler.sandbox.jsonc",
     "deploy:staging": "wrangler deploy --config wrangler.staging.jsonc",
     "cf:types": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply rtldatasets-orders --local",
     "db:migrate:remote": "wrangler d1 migrations apply rtldatasets-orders --remote",
+    "db:migrate:sandbox": "wrangler d1 migrations apply rtldatasets-orders-sandbox --remote --config wrangler.sandbox.jsonc",
     "package:sample": "node scripts/package-sample.mjs",
-    "upload:sample": "node scripts/upload-sample.mjs",
+    "prepare:production-assets": "node scripts/prepare-worker-assets.mjs",
+    "verify:worker-assets": "node scripts/verify-worker-assets.mjs",
     "test": "node --test"
   },
   "dependencies": {

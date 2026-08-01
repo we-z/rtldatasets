@@ -4,10 +4,9 @@ import {
   apiNotFound,
   checkoutSuccess,
   downloadSample,
-  purchaseAccessPage,
   purchaseSuccessPage,
   publicErrorResponse,
-  redeemPurchase,
+  recoverPurchase,
   storeStatus,
   stripeWebhook,
 } from './handlers.js';
@@ -22,21 +21,19 @@ export default {
         case '/api/create-checkout-session':
           return await createCheckout(request, env);
         case '/api/checkout-success':
-          return await checkoutSuccess(request, env, ctx);
+          return await checkoutSuccess(request, env);
+        case '/api/recover-purchase':
+          return await recoverPurchase(request, env);
         case '/api/stripe-webhook':
           return await stripeWebhook(request, env);
-        case '/api/redeem':
-          return await redeemPurchase(request, env);
         case '/api/download-sample':
           return await downloadSample(request, env, ctx);
-        case '/purchase-access':
-        case '/purchase-access/':
-          return await purchaseAccessPage(request, env);
         case '/purchase-success':
         case '/purchase-success/':
           return await purchaseSuccessPage(request, env);
         default:
           if (path.startsWith('/api/')) return apiNotFound();
+          if (path.startsWith('/__private/')) return apiNotFound();
           return env.ASSETS.fetch(request);
       }
     } catch (error) {

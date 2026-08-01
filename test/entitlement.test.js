@@ -1,14 +1,18 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { PRODUCT } from '../worker/product.js';
-import { validateFixedPrice, validatePaidSession } from '../worker/entitlement.js';
+import {
+  validateBrowserRecovery,
+  validateFixedPrice,
+  validatePaidSession,
+} from '../worker/entitlement.js';
 
 const sha = 'a'.repeat(64);
 const config = {
   stripePriceId: 'price_sample',
   stripeLivemode: false,
   artifactSha256: sha,
-  artifactR2Key: `artifacts/product/v1/sha256/${sha}/${PRODUCT.archiveFilename}`,
+  artifactAssetPath: `/__private/artifacts/product/v1/sha256/${sha}/${PRODUCT.archiveFilename}`,
 };
 
 function paidSession() {
@@ -22,13 +26,14 @@ function paidSession() {
     amount_subtotal: 100_000,
     amount_total: 100_000,
     created: 1_785_542_400,
+    client_reference_id: '123e4567-e89b-42d3-a456-426614174000',
     customer_details: { email: 'Buyer@Example.com' },
     metadata: {
       product_id: PRODUCT.productId,
       sku: PRODUCT.sku,
       artifact_version: PRODUCT.artifactVersion,
       artifact_sha256: sha,
-      artifact_r2_key: config.artifactR2Key,
+      artifact_asset_path: config.artifactAssetPath,
       terms_version: PRODUCT.termsVersion,
     },
     line_items: {
@@ -57,6 +62,7 @@ function paidSession() {
         amount: 100_000,
         amount_captured: 100_000,
         amount_refunded: 0,
+        created: 1_785_542_410,
         currency: 'usd',
         livemode: false,
         payment_intent: 'pi_test',
@@ -98,10 +104,23 @@ test('wrong product, price, refund, dispute, and revocation are rejected', () =>
     (session) => { session.payment_intent.latest_charge.refunded = true; },
     (session) => { session.payment_intent.latest_charge.disputed = true; },
     (session) => { session.metadata.entitlement_revoked = 'true'; },
+    (session) => { session.client_reference_id = 'not-a-checkout-attempt'; },
   ];
   for (const mutate of mutations) {
     const session = paidSession();
     mutate(session);
     assert.throws(() => validatePaidSession(session, config));
   }
+});
+
+test('browser recovery requires a matching attempt and a recent Stripe charge', () => {
+  const paid = validatePaidSession(paidSession(), config);
+  const attemptId = paid.session.client_reference_id;
+  const now = paid.charge.created + 7 * 24 * 60 * 60 - 1;
+  assert.equal(validateBrowserRecovery(paid, [attemptId], now), attemptId);
+  assert.throws(() => validateBrowserRecovery(paid, ['123e4567-e89b-42d3-b456-426614174001'], now));
+  assert.throws(() => validateBrowserRecovery(paid, [attemptId], now + 1));
+
+  const future = validatePaidSession(paidSession(), config);
+  assert.throws(() => validateBrowserRecovery(future, [attemptId], future.charge.created - 301));
 });

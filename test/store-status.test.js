@@ -1,0 +1,38 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { storeStatus } from '../worker/handlers.js';
+import { PRODUCT } from '../worker/product.js';
+
+test('store status is lightweight and exposes no amount', async () => {
+  const sha = 'd'.repeat(64);
+  const env = {
+    STORE_LIVE: 'true',
+    SITE_URL: 'https://www.rtldatasets.com',
+    STRIPE_SECRET_KEY: 'sk_test_example',
+    STRIPE_MODE: 'test',
+    STRIPE_WEBHOOK_SECRET: 'whsec_example',
+    STRIPE_SAMPLE_PRICE_ID: 'price_example',
+    STRIPE_AUTOMATIC_TAX: 'false',
+    ENTITLEMENT_SIGNING_SECRET: 'a-signing-secret-that-is-more-than-32-bytes',
+    SAMPLE_ARCHIVE_SHA256: sha,
+    SAMPLE_ASSET_PATH: `/__private/artifacts/sha256/${sha}/${PRODUCT.archiveFilename}`,
+    SAMPLE_ARCHIVE_BYTES: '69675',
+    ORDERS: {},
+    ASSETS: {
+      async fetch() {
+        throw new Error('status must not read the protected artifact');
+      },
+    },
+    CHECKOUT_RATE_LIMITER: {},
+  };
+
+  const response = await storeStatus(
+    new Request('https://www.rtldatasets.com/api/store-status'),
+    env,
+  );
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), {
+    available: true,
+    product: PRODUCT.name,
+  });
+});

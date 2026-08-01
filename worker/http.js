@@ -14,13 +14,20 @@ export const NO_STORE_HEADERS = Object.freeze({
 });
 
 export function json(data, status = 200, extraHeaders = {}) {
+  const headers = new Headers({
+    ...NO_STORE_HEADERS,
+    'Content-Type': 'application/json; charset=utf-8',
+  });
+  for (const [key, value] of Object.entries(extraHeaders)) {
+    if (Array.isArray(value)) {
+      for (const item of value) headers.append(key, item);
+    } else {
+      headers.set(key, value);
+    }
+  }
   return new Response(JSON.stringify(data), {
     status,
-    headers: {
-      ...NO_STORE_HEADERS,
-      'Content-Type': 'application/json; charset=utf-8',
-      ...extraHeaders,
-    },
+    headers,
   });
 }
 

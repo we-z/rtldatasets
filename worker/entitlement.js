@@ -1,5 +1,7 @@
 import { PRODUCT } from './product.js';
+import { TOKEN_LIFETIMES } from './product.js';
 import { HttpError } from './http.js';
+import { recentAttemptsContain, validAttemptId } from './tokens.js';
 
 function requireObject(value, code) {
   if (!value || typeof value !== 'object') throw new HttpError(403, code);
@@ -37,11 +39,12 @@ export function validatePaidSession(session, config) {
     session.mode !== 'payment' ||
     session.payment_status !== 'paid' ||
     session.livemode !== config.stripeLivemode ||
+    !validAttemptId(session.client_reference_id) ||
     metadata.product_id !== PRODUCT.productId ||
     metadata.sku !== PRODUCT.sku ||
     metadata.artifact_version !== PRODUCT.artifactVersion ||
     metadata.artifact_sha256 !== config.artifactSha256 ||
-    metadata.artifact_r2_key !== config.artifactR2Key ||
+    metadata.artifact_asset_path !== config.artifactAssetPath ||
     metadata.terms_version !== PRODUCT.termsVersion ||
     metadata.entitlement_revoked === 'true'
   ) {
@@ -90,6 +93,7 @@ export function validatePaidSession(session, config) {
     charge.amount_refunded !== 0 ||
     charge.currency !== PRODUCT.currency ||
     charge.livemode !== config.stripeLivemode ||
+    !Number.isInteger(charge.created) ||
     objectId(charge.payment_intent) !== objectId(paymentIntent)
   ) {
     throw new HttpError(403, 'purchase_inactive');
@@ -115,4 +119,23 @@ export async function loadPaidSession(stripe, sessionId, config) {
     expand: ['line_items.data.price', 'payment_intent.latest_charge'],
   });
   return validatePaidSession(session, config);
+}
+
+export function validateBrowserRecovery(
+  paid,
+  attemptIds,
+  nowSeconds = Math.floor(Date.now() / 1000),
+) {
+  const attemptId = paid?.session?.client_reference_id;
+  const created = paid?.charge?.created;
+  if (
+    !validAttemptId(attemptId) ||
+    !recentAttemptsContain(attemptIds, attemptId) ||
+    !Number.isInteger(created) ||
+    created > nowSeconds + 5 * 60 ||
+    created + TOKEN_LIFETIMES.browserRecoverySeconds <= nowSeconds
+  ) {
+    throw new HttpError(403, 'invalid_purchase');
+  }
+  return attemptId;
 }
