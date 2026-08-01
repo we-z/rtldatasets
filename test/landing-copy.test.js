@@ -8,6 +8,13 @@ test('sample section uses evaluation wording without an outer border', async () 
 
   assert.match(sample, /RLVR Evaluation Sample: 5 Tasks/u);
   assert.doesNotMatch(sample, /diagnostic/iu);
+  assert.doesNotMatch(sample, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
   assert.doesNotMatch(sample, /<section[^>]*\bborder\s*:/iu);
   assert.doesNotMatch(sample, /—/u);
+});
+
+test('public sample terms do not name third-party licenses', async () => {
+  const terms = await readFile(new URL('../public/sample-license.html', import.meta.url), 'utf8');
+
+  assert.doesNotMatch(terms, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
 });
