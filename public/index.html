@@ -148,9 +148,6 @@
             <li><strong>EDA tool flows</strong>: Synthesis scripts, OpenROAD/Yosys/OpenLane configurations, and physical design collateral</li>
         </ul>
         <h3 class="section-title">Post-training (RL Environments)</h3>
-        <p>
-            Individual RLVR tasks range from <strong>$100 to $1,000 each</strong>, with pricing varying greatly based on task depth, verification breadth, hidden mutation coverage, toolchain requirements, and trajectory complexity.
-        </p>
         <ul>
             <li><strong>Open-source reward verification</strong>: Verilator, Yosys, cocotb, Icarus Verilog, GHDL, GTKWave, OpenROAD, and OpenLane compile, simulate, synthesize, inspect waveforms, and measure implementation results so rewards are grounded in executable hardware behavior</li>
             <li><strong>Custom UVM trajectory ports</strong>: Purpose-built UVM ports replay and verify full SystemVerilog trajectories—including intermediate edits, assertions, testbench interactions, coverage, and final RTL—across the entire codebase</li>
@@ -163,6 +160,43 @@
             Email: <a href="mailto:root@puul.ai" class="contact-btn">root@puul.ai</a><br>
             Signal/text: <a href="sms:+16508809229" class="contact-btn">650-880-9229</a>
         </div>
+        <section id="sample" aria-labelledby="sample-title" style="border: 1px solid #bbb; padding: 1.5rem; margin-top: 3rem;">
+            <h2 id="sample-title" style="font-size: 1.55rem; margin-bottom: 1rem;">SoC Design + Verification RLVR Diagnostic Sample — 5 Tasks</h2>
+            <p>
+                A diagnostic evaluation package spanning UART, memory, and RV32 CPU work. It contains three RTL design or repair tasks and two verification-authoring tasks built around Verilog/SystemVerilog, Python, cocotb, Icarus Verilog, Verilator, and Yosys.
+            </p>
+            <h3 class="section-title">Included</h3>
+            <ul>
+                <li>Five task bundles with specifications, editable starter files, Makefiles, and public tests</li>
+                <li>Task metadata, locked reward contracts, environment requirements, provenance, and admission summaries</li>
+                <li>Protocol and trajectory schemas, aggregate diagnostic results, and sanitized per-snapshot reward trajectories from one fresh attempt per task</li>
+                <li>A SHA-256 manifest covering the delivered files</li>
+            </ul>
+            <h3 class="section-title">Not included</h3>
+            <ul>
+                <li>Private graders, hidden tests, mutation banks, gold solutions, or completed model solutions</li>
+                <li>Raw agent messages, candidate diffs, provider thread or receipt identifiers, credentials, or private toolchain images</li>
+                <li>A turnkey hidden-reward runtime or permission to represent the diagnostic results as a production benchmark</li>
+            </ul>
+            <p>
+                The sample preserves the applicable MIT and Apache-2.0 notices for corresponding files. The sample license governs operator-authored packaging, curation, metadata, schemas, verification contracts, and diagnostic evidence without reducing rights provided by those open-source licenses.
+            </p>
+            <form action="/api/create-checkout-session" method="post" id="sample-checkout-form">
+                <input type="hidden" name="attempt_id" id="checkout-attempt-id" value="">
+                <input type="hidden" name="terms_version" value="1.0.0">
+                <fieldset style="border: 1px solid #777; padding: 1rem; margin: 1.5rem 0;">
+                    <legend style="padding: 0 0.4rem; font-weight: bold;">Required purchase agreement</legend>
+                    <label style="display: block; font-size: 1rem; line-height: 1.55;">
+                        <input type="checkbox" name="terms_accepted" value="yes" required style="margin-right: 0.4rem;">
+                        I understand that this is a five-task diagnostic sample, not a production benchmark or turnkey hidden-reward runtime; that it excludes private graders, hidden tests, mutation banks, gold solutions, completed model solutions, raw agent messages, candidate diffs, provider identifiers, credentials, and private toolchain images; and that my purchase is governed by the <a href="/sample-license.html">sample license and limitations</a>, <a href="/refund-policy.html">digital delivery and refund policy</a>, and <a href="/privacy.html">privacy notice</a>. I have reviewed and accept those terms.
+                    </label>
+                </fieldset>
+                <button type="submit" id="purchase-button" disabled style="border: 1px solid #111; background: #111; color: white; cursor: not-allowed; opacity: 0.55; padding: 0.8rem 1rem; font-size: 1.05rem;">JavaScript required for checkout</button>
+                <p id="store-status" aria-live="polite" style="font-size: 0.95rem; margin: 0.8rem 0 0;">Enable JavaScript to check secure checkout availability, or email <a href="mailto:root@puul.ai">root@puul.ai</a> for help.</p>
+            </form>
+            <p style="font-size: 0.95rem; margin-top: 1rem;">Secure checkout is provided by Stripe. Payment confirmation, private access email, and download delivery are automated through Cloudflare.</p>
+        </section>
     </main>
+    <script src="/assets/checkout.js"></script>
 </body>
 </html>

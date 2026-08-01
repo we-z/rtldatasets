@@ -18,7 +18,7 @@
   const query = new URLSearchParams(window.location.search);
   const checkoutCancelled = query.get('checkout') === 'cancelled';
   if (checkoutCancelled) {
-    status.textContent = 'Checkout was canceled. You have not been charged.';
+    status.textContent = 'Checkout was canceled. No purchase was completed.';
   }
 
   fetch('/api/store-status', { cache: 'no-store', credentials: 'same-origin' })
@@ -29,21 +29,27 @@
     .then((data) => {
       if (data.available !== true) throw new Error('Checkout unavailable');
       button.disabled = false;
-      button.textContent = 'Buy the five-task sample — $1,000';
+      button.style.cursor = 'pointer';
+      button.style.opacity = '1';
+      button.textContent = 'Purchase the five-task sample';
       status.textContent = checkoutCancelled
-        ? 'Checkout was canceled. You have not been charged; you may try again.'
+        ? 'Checkout was canceled. No purchase was completed; you may try again.'
         : 'Checkout is available. Delivery is automated after payment.';
     })
     .catch(() => {
       button.disabled = true;
+      button.style.cursor = 'not-allowed';
+      button.style.opacity = '0.55';
       button.textContent = 'Checkout temporarily unavailable';
       status.textContent = checkoutCancelled
-        ? 'Checkout was canceled. You have not been charged. Email root@puul.ai if you need help.'
+        ? 'Checkout was canceled. No purchase was completed. Email root@puul.ai if you need help.'
         : 'Email root@puul.ai to purchase or ask when secure checkout will be available.';
     });
 
   form.addEventListener('submit', () => {
     button.disabled = true;
+    button.style.cursor = 'not-allowed';
+    button.style.opacity = '0.55';
     button.textContent = 'Opening secure checkout…';
     status.textContent = 'Redirecting to Stripe. Please do not submit twice.';
   });
