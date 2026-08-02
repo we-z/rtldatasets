@@ -78,16 +78,19 @@ test('the contact section uses accessible black primary and neutral secondary ac
   assert.match(landing, /@media \(prefers-reduced-motion: reduce\)/u);
   assert.match(landing, /Countless more architectures available on request\./u);
   assert.equal((landing.match(/Contact us via:/gu) || []).length, 1);
-  assert.match(landing, /<a href="\/sample" class="purchase-sample-btn">See Eval sample tasks<\/a>/u);
+  assert.match(landing, /<a href="\/sample" class="purchase-sample-btn">Explore Eval sample tasks<\/a>/u);
   assert.match(landing, /\.purchase-sample-btn \{[^}]*width: auto;[^}]*border-radius: 8px;/u);
   assert.ok(landing.indexOf('Contact us via:') > landing.lastIndexOf('</details>'));
-  assert.ok(landing.indexOf('See Eval sample tasks') < landing.indexOf('Contact us via:'));
+  assert.ok(landing.indexOf('Explore Eval sample tasks') < landing.indexOf('Contact us via:'));
   assert.doesNotMatch(landing, /id="sample-checkout-form"|id="purchase-button"|\/assets\/checkout\.js/u);
   assert.doesNotMatch(landing, /—/u);
 });
 
-test('all landing content sections are closed disclosures with responsive chevrons', async () => {
-  const landing = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
+test('all landing content sections are closed, animated native disclosures', async () => {
+  const [landing, animation] = await Promise.all([
+    readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
+    readFile(new URL('../public/assets/details-animation.js', import.meta.url), 'utf8'),
+  ]);
 
   assert.equal((landing.match(/<details class="collapsible-group">/gu) || []).length, 3);
   assert.equal((landing.match(/<details class="collapsible-section">/gu) || []).length, 17);
@@ -95,15 +98,36 @@ test('all landing content sections are closed disclosures with responsive chevro
   assert.equal((landing.match(/class="section-chevron" aria-hidden="true"/gu) || []).length, 20);
   assert.doesNotMatch(landing, /<details[^>]*\sopen(?:\s|=|>)/iu);
   assert.match(landing, /\.collapsible-summary \{[^}]*min-height: 44px;[^}]*cursor: pointer;/u);
+  assert.match(landing, /\.collapsible-summary \{[^}]*background: transparent;[^}]*-webkit-tap-highlight-color: transparent;/u);
+  assert.match(landing, /\.collapsible-summary:active \{ background: transparent; \}/u);
   assert.match(landing, /\.collapsible-summary::-webkit-details-marker \{ display: none; \}/u);
   assert.match(landing, /\.collapsible-summary:focus-visible \{ outline: 2px solid #111; outline-offset: 4px; \}/u);
   assert.match(landing, /\.section-chevron \{[^}]*transform: rotate\(-45deg\);[^}]*transition: transform 180ms ease;/u);
   assert.match(landing, /details\[open\] > \.collapsible-summary > \.section-chevron \{ transform: rotate\(45deg\); \}/u);
-  assert.match(landing, /@supports \(interpolate-size: allow-keywords\) and selector\(details::details-content\)/u);
-  assert.match(landing, /\.content \{ interpolate-size: allow-keywords; \}/u);
-  assert.match(landing, /\.collapsible-group::details-content, \.collapsible-section::details-content \{ height: 0; overflow: clip; opacity: 0;[^}]*content-visibility 280ms allow-discrete;/u);
-  assert.match(landing, /\.collapsible-group\[open\]::details-content, \.collapsible-section\[open\]::details-content \{ height: auto; opacity: 1; \}/u);
-  assert.match(landing, /\.section-chevron, \.collapsible-group::details-content, \.collapsible-section::details-content, \.purchase-sample-btn \{ transition: none; \}/u);
+  assert.match(landing, /\.collapsible-group, \.collapsible-section \{ display: flow-root; \}/u);
+  assert.match(landing, /\.collapsible-group\.is-animating, \.collapsible-section\.is-animating \{ overflow: hidden; will-change: height; transition: height var\(--details-duration, 320ms\) cubic-bezier\(0\.25, 1, 0\.5, 1\); \}/u);
+  assert.match(landing, /details\.is-closing > \.collapsible-summary > \.section-chevron \{ transform: rotate\(-45deg\); \}/u);
+  assert.match(landing, /@keyframes disclosure-content-in \{[^}]*opacity: 0; transform: translateY\(-0\.5rem\);/su);
+  assert.match(landing, /@keyframes disclosure-content-out \{[^}]*opacity: 1; transform: translateY\(0\);/su);
+  assert.equal((landing.match(/<script src="\/assets\/details-animation\.js" defer><\/script>/gu) || []).length, 1);
+  assert.doesNotMatch(landing, /::details-content|interpolate-size/iu);
+
+  assert.match(animation, /details\.collapsible-group, details\.collapsible-section/u);
+  assert.match(animation, /prefers-reduced-motion: reduce/u);
+  assert.match(animation, /event\.preventDefault\(\)/u);
+  assert.match(animation, /getBoundingClientRect\(\)\.height/u);
+  assert.match(animation, /this\.details\.scrollHeight/u);
+  assert.match(animation, /requestAnimationFrame\(/u);
+  assert.match(animation, /transitionend/u);
+  assert.match(animation, /this\.animating \? !this\.desiredOpen : !this\.details\.open/u);
+  assert.match(animation, /settleAnimatingAncestors\(\)/u);
+  assert.match(animation, /settleAnimatingDescendants\(\)/u);
+  assert.match(animation, /cancelAnimationFrame\(this\.frame\)/u);
+  assert.match(animation, /typeof reduceMotion\.addEventListener === 'function'/u);
+  assert.match(animation, /typeof reduceMotion\.addListener === 'function'/u);
+  assert.doesNotMatch(animation, /\?\./u);
+  assert.doesNotMatch(animation, /\.animate\(/u);
+  assert.doesNotMatch(animation, /fetch\(|import\(|eval\(|new Function/iu);
 
   for (const heading of [
     'RTL by Chip Type',

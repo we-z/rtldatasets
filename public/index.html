@@ -43,18 +43,28 @@
         .group-title { font-size: 2rem; margin: 1rem 0 1.25rem; font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; }
         .section-title { font-size: 1.625rem; margin-bottom: 1rem; font-weight: 300; letter-spacing: -0.01em; line-height: 1.12; }
         .collapsible-group { margin: 1rem 0 1.5rem; }
-        .collapsible-summary { display: flex; min-height: 44px; width: 100%; align-items: center; gap: 0.75rem; padding: 0.4rem 0; color: #111; list-style: none; cursor: pointer; border-radius: 8px; }
+        .collapsible-summary { display: flex; min-height: 44px; width: 100%; align-items: center; gap: 0.75rem; padding: 0.4rem 0; color: #111; background: transparent; list-style: none; cursor: pointer; border-radius: 8px; -webkit-tap-highlight-color: transparent; }
         .collapsible-summary::-webkit-details-marker { display: none; }
         .collapsible-summary::marker { content: ""; }
         .collapsible-summary:hover { color: #444; }
+        .collapsible-summary:active { background: transparent; }
         .collapsible-summary:focus-visible { outline: 2px solid #111; outline-offset: 4px; }
         .collapsible-summary .group-title, .collapsible-summary .section-title, .collapsible-summary #sample-title { margin: 0; }
         .section-chevron { width: 0.55rem; height: 0.55rem; flex: 0 0 0.55rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform 180ms ease; }
         details[open] > .collapsible-summary > .section-chevron { transform: rotate(45deg); }
-        @supports (interpolate-size: allow-keywords) and selector(details::details-content) {
-            .content { interpolate-size: allow-keywords; }
-            .collapsible-group::details-content, .collapsible-section::details-content { height: 0; overflow: clip; opacity: 0; transition: height 280ms cubic-bezier(0.25, 1, 0.5, 1), opacity 180ms ease, content-visibility 280ms allow-discrete; }
-            .collapsible-group[open]::details-content, .collapsible-section[open]::details-content { height: auto; opacity: 1; }
+        .collapsible-group, .collapsible-section { display: flow-root; }
+        .collapsible-group.is-animating, .collapsible-section.is-animating { overflow: hidden; will-change: height; transition: height var(--details-duration, 320ms) cubic-bezier(0.25, 1, 0.5, 1); }
+        details.is-closing > .collapsible-summary > .section-chevron { transform: rotate(-45deg); }
+        .collapsible-group.is-animating > .collapsible-summary:focus-visible, .collapsible-section.is-animating > .collapsible-summary:focus-visible { outline-offset: -2px; }
+        .collapsible-group.is-opening > .group-content, .collapsible-section.is-opening > ul { animation: disclosure-content-in var(--details-duration, 320ms) cubic-bezier(0.25, 1, 0.5, 1) both; }
+        .collapsible-group.is-closing > .group-content, .collapsible-section.is-closing > ul { animation: disclosure-content-out var(--details-duration, 320ms) cubic-bezier(0.25, 1, 0.5, 1) both; }
+        @keyframes disclosure-content-in {
+            from { opacity: 0; transform: translateY(-0.5rem); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes disclosure-content-out {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-0.375rem); }
         }
         .group-content { padding: 0.5rem 0 0.25rem 1.45rem; }
         .collapsible-section { margin: 0.25rem 0 0.5rem; }
@@ -69,7 +79,9 @@
             .collapsible-section > ul { padding-left: 1.75rem; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .section-chevron, .collapsible-group::details-content, .collapsible-section::details-content, .purchase-sample-btn { transition: none; }
+            .section-chevron, .purchase-sample-btn { transition: none; }
+            .collapsible-group.is-animating, .collapsible-section.is-animating { transition: none; }
+            .collapsible-group.is-opening > .group-content, .collapsible-section.is-opening > ul, .collapsible-group.is-closing > .group-content, .collapsible-section.is-closing > ul { animation: none; }
         }
     </style>
 </head>
@@ -306,7 +318,7 @@
                 </div>
             </details>
         </section>
-        <a href="/sample" class="purchase-sample-btn">See Eval sample tasks</a>
+        <a href="/sample" class="purchase-sample-btn">Explore Eval sample tasks</a>
         <div class="contact landing-contact">
             <div class="contact-label">Contact us via:</div>
             <div class="contact-actions">
@@ -315,5 +327,6 @@
             </div>
         </div>
     </main>
+    <script src="/assets/details-animation.js" defer></script>
 </body>
 </html>

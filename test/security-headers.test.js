@@ -9,6 +9,8 @@ test('CSP permits only the fixed Stripe Checkout redirect destination', async ()
     headers,
     /form-action 'self' https:\/\/checkout\.stripe\.com;/u,
   );
+  assert.match(headers, /script-src 'self';/u);
+  assert.doesNotMatch(headers, /script-src[^;]*(?:'unsafe-inline'|\*)/u);
   assert.doesNotMatch(headers, /form-action[^\n]*\*/u);
 });
 
