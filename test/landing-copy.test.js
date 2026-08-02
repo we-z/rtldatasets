@@ -19,14 +19,14 @@ test('public sample terms do not name third-party licenses', async () => {
   assert.doesNotMatch(terms, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
 });
 
-test('the landing and supporting pages share the Apple system font stack', async () => {
+test('the landing and supporting pages share the Stripe Checkout font stack', async () => {
   const [landing, supporting] = await Promise.all([
     readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
     readFile(new URL('../public/assets/legal.css', import.meta.url), 'utf8'),
   ]);
 
   for (const stylesheet of [landing, supporting]) {
-    assert.match(stylesheet, /font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;/u);
+    assert.match(stylesheet, /font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif;/u);
     assert.match(stylesheet, /button, input, select, textarea \{ font-family: inherit; \}/u);
   }
 });
