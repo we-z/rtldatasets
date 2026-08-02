@@ -19,14 +19,19 @@ test('public sample terms do not name third-party licenses', async () => {
   assert.doesNotMatch(terms, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
 });
 
-test('the landing and supporting pages share the Stripe Checkout font stack', async () => {
+test('the landing page uses Stripe marketing typography while supporting pages retain the Checkout stack', async () => {
   const [landing, supporting] = await Promise.all([
     readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
     readFile(new URL('../public/assets/legal.css', import.meta.url), 'utf8'),
   ]);
 
+  assert.match(landing, /font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 300;/u);
+  assert.match(landing, /h1 \{[^}]*font-weight: 300;[^}]*letter-spacing: -0\.02em;[^}]*line-height: 1\.08;/u);
+  assert.match(landing, /p \{[^}]*line-height: 1\.4;/u);
+  assert.match(landing, /strong \{ font-weight: 400; \}/u);
+  assert.match(supporting, /font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif;/u);
+
   for (const stylesheet of [landing, supporting]) {
-    assert.match(stylesheet, /font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif;/u);
-    assert.match(stylesheet, /button, input, select, textarea \{ font-family: inherit; \}/u);
+    assert.match(stylesheet, /button, input, select, textarea \{ font-family: inherit;/u);
   }
 });
