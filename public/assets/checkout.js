@@ -5,6 +5,10 @@
   const attemptInput = document.querySelector('#checkout-attempt-id');
   if (!form || !button || !status || !attemptInput) return;
 
+  window.addEventListener('pageshow', (event) => {
+    if (event.persisted) window.location.reload();
+  });
+
   const attemptStorageKey = 'rtl_checkout_attempts_v1';
   const attemptLifetimeMs = 7 * 24 * 60 * 60 * 1000;
   const maxAttempts = 20;

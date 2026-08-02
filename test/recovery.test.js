@@ -56,6 +56,22 @@ test('checkout completion and webhook recovery restore access without URL attemp
   assert.doesNotMatch(handlers, /sessionId[^\n]*JSON/u);
 });
 
+test('browser-back checkout state is reloaded and the checkout client is never served stale', async () => {
+  const [checkout, headers] = await Promise.all([
+    readFile(new URL('../public/assets/checkout.js', import.meta.url), 'utf8'),
+    readFile(new URL('../public/_headers', import.meta.url), 'utf8'),
+  ]);
+
+  assert.match(
+    checkout,
+    /window\.addEventListener\('pageshow', \(event\) => \{\s*if \(event\.persisted\) window\.location\.reload\(\);\s*\}\);/u,
+  );
+  assert.match(
+    headers,
+    /\/assets\/checkout\.js\s+Cache-Control: private, no-store, max-age=0/u,
+  );
+});
+
 test('recovery handler revalidates Stripe and issues only an HttpOnly entitlement cookie', async () => {
   const now = 2_000_000_000;
   let recorded = 0;
