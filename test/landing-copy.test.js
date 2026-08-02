@@ -149,14 +149,17 @@ test('all landing content sections are closed, animated native disclosures', asy
   }
   assert.doesNotMatch(landing, /id="waveform-title"|>Waveform &amp; Signal Processing<|>Oscilloscopes<|>ADC<|>DAC<|>DDS &amp; Waveform Generation<|>Simulation &amp; Waveform Tooling</u);
   assert.doesNotMatch(landing, />For training AI on chip design</u);
-  assert.match(landing, /<h3 class="section-title">Is your data synthetic\?<\/h3>[\s\S]*<p class="faq-answer">Our data is fully synthetic, novel, and proprietary\.<\/p>/u);
+  assert.match(landing, /<h3 class="section-title">Where is your data from\?<\/h3>[\s\S]*<p class="faq-answer">Our data is fully synthetic, novel, and proprietary\.<\/p>/u);
+  assert.doesNotMatch(landing, /Is your data synthetic\?/u);
   assert.match(landing, /<h3 class="section-title">What do your licenses cover\?<\/h3>[\s\S]*<p class="faq-answer">Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights\.<\/p>/u);
-  assert.match(landing, /<h3 class="section-title">Who owns trained models and outputs\?<\/h3>[\s\S]*<p class="faq-answer">Trained models and outputs remain yours\.<\/p>/u);
+  assert.match(landing, /<h3 class="section-title">Who owns trained models and outputs\?<\/h3>[\s\S]*<p class="faq-answer">You retain ownership of the trained models and outputs you create using our data\.<\/p>/u);
   assert.equal((landing.match(/Our data is fully synthetic, novel, and proprietary\./gu) || []).length, 1);
   assert.equal((landing.match(/Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights\./gu) || []).length, 1);
-  assert.equal((landing.match(/Trained models and outputs remain yours\./gu) || []).length, 1);
+  assert.equal((landing.match(/You retain ownership of the trained models and outputs you create using our data\./gu) || []).length, 1);
   assert.ok(landing.indexOf('id="training-title"') < landing.indexOf('id="chip-type-title"'));
   assert.ok(landing.indexOf('id="chip-type-title"') < landing.indexOf('id="faq-title"'));
+  assert.ok(landing.indexOf('Countless more architectures available on request.') > landing.indexOf('id="chip-type-title"'));
+  assert.ok(landing.indexOf('Countless more architectures available on request.') < landing.indexOf('id="faq-title"'));
   assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Explore Eval sample tasks'));
 });
 
