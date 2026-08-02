@@ -51,6 +51,16 @@ test('the landing and sample pages use Stripe marketing typography while support
   }
 });
 
+test('the landing page highlights the three strongest scale claims', async () => {
+  const landing = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
+
+  assert.match(landing, /<li><strong>50,000\+<\/strong> code bases<\/li>/u);
+  assert.match(landing, /<li><strong>10,000,000\+<\/strong> raw code files<\/li>/u);
+  assert.match(landing, /<li><strong>100,000\+<\/strong> RLVR tasks that hill climb<\/li>/u);
+  assert.doesNotMatch(landing, /verified RTL tasks that hill climb/u);
+  assert.doesNotMatch(landing, /100,000,000,000\+|<strong>[^<]*<\/strong> tokens/u);
+});
+
 test('the contact section uses simple accessible text links', async () => {
   const landing = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 
