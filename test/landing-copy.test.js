@@ -11,6 +11,8 @@ test('sample section uses evaluation wording without an outer border', async () 
   assert.doesNotMatch(sample, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
   assert.doesNotMatch(sample, /<section[^>]*\bborder\s*:/iu);
   assert.doesNotMatch(sample, /—/u);
+  assert.match(sample, /<fieldset style="border: 1px solid #777; border-radius: 14px;/u);
+  assert.match(sample, /id="purchase-button"[^>]*border-radius: 999px;/u);
 });
 
 test('public sample terms do not name third-party licenses', async () => {
@@ -36,18 +38,29 @@ test('the landing page uses Stripe marketing typography while supporting pages r
   }
 });
 
-test('both contact sections use accessible Stripe-style primary and secondary actions', async () => {
+test('the contact section uses accessible black primary and neutral secondary actions', async () => {
   const landing = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 
-  assert.equal((landing.match(/class="contact-actions"/gu) || []).length, 2);
-  assert.equal((landing.match(/class="contact-btn contact-btn--primary"/gu) || []).length, 2);
-  assert.equal((landing.match(/class="contact-btn contact-btn--secondary"/gu) || []).length, 2);
-  assert.equal((landing.match(/class="contact-arrow" aria-hidden="true"/gu) || []).length, 4);
-  assert.equal((landing.match(/href="mailto:root@puul\.ai" class="contact-btn contact-btn--primary"/gu) || []).length, 2);
-  assert.equal((landing.match(/href="sms:\+16508809229" class="contact-btn contact-btn--secondary"/gu) || []).length, 2);
-  assert.match(landing, /\.contact-btn--primary \{ color: #fff; background: #533afd; \}/u);
-  assert.match(landing, /\.contact-btn--secondary \{ color: #533afd; background: transparent; border-color: #b9b9f9; \}/u);
-  assert.match(landing, /\.contact-btn:focus-visible \{ outline: 3px solid rgba\(84, 82, 251, 0\.75\); outline-offset: 1px; \}/u);
+  assert.equal((landing.match(/class="contact-actions"/gu) || []).length, 1);
+  assert.equal((landing.match(/class="contact-btn contact-btn--primary"/gu) || []).length, 1);
+  assert.equal((landing.match(/class="contact-btn contact-btn--secondary"/gu) || []).length, 1);
+  assert.equal((landing.match(/class="contact-arrow" aria-hidden="true"/gu) || []).length, 2);
+  assert.match(landing, /href="mailto:root@puul\.ai\?subject=RTL%20Datasets%20request&amp;body=/u);
+  assert.match(landing, /Company%20or%20organization%3A/u);
+  assert.match(landing, /Verification%20and%20tooling%3A/u);
+  assert.match(landing, /Licensing%20preference%3A/u);
+  assert.equal((landing.match(/href="sms:\+16508809229" class="contact-btn contact-btn--secondary"/gu) || []).length, 1);
+  assert.match(landing, /\.contact-btn \{[^}]*border-radius: 999px;/u);
+  assert.match(landing, /\.contact-btn--primary \{ color: #fff; background: #000; \}/u);
+  assert.match(landing, /\.contact-btn--secondary \{ color: #111; background: #fff; border-color: #d8d8d8; \}/u);
+  assert.match(landing, /\.contact-btn:focus-visible \{ outline: 3px solid #111; outline-offset: 3px; \}/u);
+  assert.doesNotMatch(landing, /box-shadow/iu);
+  assert.doesNotMatch(landing, /#533afd|#4032c8|#b9b9f9|#2e2b8c|rgba\(84, 82, 251/iu);
   assert.match(landing, /@media \(max-width: 640px\)/u);
+  assert.match(landing, /\.contact-actions \{ align-items: flex-start; flex-direction: column; \}/u);
+  assert.match(landing, /\.contact-btn \{ width: auto; max-width: 100%; min-height: 48px; \}/u);
   assert.match(landing, /@media \(prefers-reduced-motion: reduce\)/u);
+  assert.match(landing, /Countless more architectures available on request\./u);
+  assert.equal((landing.match(/Contact us via:/gu) || []).length, 1);
+  assert.doesNotMatch(landing, /—/u);
 });
