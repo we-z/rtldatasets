@@ -19,11 +19,27 @@
         .content { text-align: left; max-width: 720px; padding-top: 2rem; }
         h1 { font-size: clamp(2.125rem, 6vw, 3rem); margin-bottom: 1.5rem; font-weight: 300; letter-spacing: -0.02em; line-height: 1.08; }
         p { font-size: 1.2rem; margin-bottom: 2rem; line-height: 1.4; }
-        .contact-btn { display: inline-block; color: blue; padding: 0.875rem 0rem; font-size: 1.2rem; font-weight: 400; text-decoration: underline; }
-        .contact-btn:hover { text-decoration: underline; }
-        .contact { margin-bottom: 2.5rem; padding: 0.25rem 0; font-size: 1.25rem; font-weight: 300; line-height: 1.4; }
-        .contact .contact-btn { color: blue; padding: 0; font-size: inherit; font-weight: 400; text-decoration: underline; }
-        .contact .contact-btn:hover { text-decoration: underline; }
+        .contact { margin-bottom: 2.5rem; padding: 0.25rem 0; font-size: 1rem; font-weight: 300; line-height: 1.4; }
+        .contact-label { margin-bottom: 0.875rem; color: #0a2540; font-weight: 400; }
+        .contact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+        .contact-btn { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; gap: 0.625rem; padding: 0 1.5rem; border: 1px solid transparent; border-radius: 4px; font-size: 1rem; font-weight: 400; line-height: 1; letter-spacing: 0; text-decoration: none; transition: background-color 300ms cubic-bezier(0.25, 1, 0.5, 1), color 300ms cubic-bezier(0.25, 1, 0.5, 1), border-color 300ms cubic-bezier(0.25, 1, 0.5, 1), outline-color 300ms cubic-bezier(0.25, 1, 0.5, 1); }
+        .contact-btn--primary { color: #fff; background: #533afd; }
+        .contact-btn--primary:hover { background: #4032c8; }
+        .contact-btn--secondary { color: #533afd; background: transparent; border-color: #b9b9f9; }
+        .contact-btn--secondary:hover { color: #2e2b8c; border-color: #4032c8; }
+        .contact-btn:focus-visible { outline: 3px solid rgba(84, 82, 251, 0.75); outline-offset: 1px; }
+        .contact-arrow { position: relative; width: 10px; height: 10px; flex: 0 0 10px; }
+        .contact-arrow::before { content: ""; position: absolute; top: 4px; left: 0; width: 7px; height: 2px; background: currentColor; opacity: 0; transform: scaleX(0); transform-origin: right center; transition: opacity 300ms cubic-bezier(0.25, 1, 0.5, 1), transform 300ms cubic-bezier(0.25, 1, 0.5, 1); }
+        .contact-arrow::after { content: ""; position: absolute; top: 2px; right: 0; width: 5px; height: 5px; border-top: 2px solid currentColor; border-right: 2px solid currentColor; transform: rotate(45deg); transition: transform 300ms cubic-bezier(0.25, 1, 0.5, 1); }
+        .contact-btn:hover .contact-arrow::before { opacity: 1; transform: scaleX(1); }
+        .contact-btn:hover .contact-arrow::after { transform: translateX(3px) rotate(45deg); }
+        @media (max-width: 640px) {
+            .contact-actions { align-items: stretch; flex-direction: column; }
+            .contact-btn { width: 100%; min-height: 44px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .contact-btn, .contact-arrow::before, .contact-arrow::after { transition: none; }
+        }
         ul { font-size: 1.2rem; line-height: 1.4; margin-bottom: 2rem; padding-left: 1.5rem; }
         li { margin-bottom: 0.5rem; }
         strong { font-weight: 400; }
@@ -48,9 +64,11 @@
             Our data is fully synthetic, novel, and proprietary. Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights. Trained models and outputs remain yours.
         </p>
         <div class="contact">
-            Contact us via:<br>
-            Email: <a href="mailto:root@puul.ai" class="contact-btn">root@puul.ai</a><br>
-            Signal/text: <a href="sms:+16508809229" class="contact-btn">650-880-9229</a>
+            <div class="contact-label">Contact us via:</div>
+            <div class="contact-actions">
+                <a href="mailto:root@puul.ai" class="contact-btn contact-btn--primary">Email: root@puul.ai<span class="contact-arrow" aria-hidden="true"></span></a>
+                <a href="sms:+16508809229" class="contact-btn contact-btn--secondary">Signal/text: 650-880-9229<span class="contact-arrow" aria-hidden="true"></span></a>
+            </div>
         </div>
         <h2 class="group-title">RTL by Chip Type</h2>
         <h3 class="section-title">TPU</h3>
@@ -159,9 +177,11 @@
         </ul>
         <p style="font-style: italic; font-size: 1.35rem;">Additional architectures and flow categories available for review.</p>
         <div class="contact">
-            Contact us via:<br>
-            Email: <a href="mailto:root@puul.ai" class="contact-btn">root@puul.ai</a><br>
-            Signal/text: <a href="sms:+16508809229" class="contact-btn">650-880-9229</a>
+            <div class="contact-label">Contact us via:</div>
+            <div class="contact-actions">
+                <a href="mailto:root@puul.ai" class="contact-btn contact-btn--primary">Email: root@puul.ai<span class="contact-arrow" aria-hidden="true"></span></a>
+                <a href="sms:+16508809229" class="contact-btn contact-btn--secondary">Signal/text: 650-880-9229<span class="contact-arrow" aria-hidden="true"></span></a>
+            </div>
         </div>
         <section id="sample" aria-labelledby="sample-title" style="margin-top: 3rem;">
             <h2 id="sample-title" style="font-size: 1.55rem; margin-bottom: 1rem;">SoC Design + Verification RLVR Evaluation Sample: 5 Tasks</h2>
