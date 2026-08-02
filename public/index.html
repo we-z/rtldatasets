@@ -29,6 +29,7 @@
         li { margin-bottom: 0.5rem; }
         strong { font-weight: 400; }
         .group-title { font-size: 2rem; margin: 1rem 0 1.25rem; font-weight: 300; letter-spacing: -0.02em; line-height: 1.1; }
+        .subgroup-title { font-size: 1.5rem; font-weight: 300; letter-spacing: -0.01em; line-height: 1.12; }
         .section-title { font-size: 1.625rem; margin-bottom: 1rem; font-weight: 300; letter-spacing: -0.01em; line-height: 1.12; }
         .collapsible-group { margin: 1rem 0 1.5rem; }
         .collapsible-summary { display: flex; min-height: 44px; width: 100%; align-items: center; gap: 0.75rem; padding: 0.4rem 0; color: #111; background: transparent; list-style: none; cursor: pointer; border-radius: 8px; -webkit-tap-highlight-color: transparent; }
@@ -37,7 +38,7 @@
         .collapsible-summary:hover { color: #444; }
         .collapsible-summary:active { background: transparent; }
         .collapsible-summary:focus-visible { outline: 2px solid #111; outline-offset: 4px; }
-        .collapsible-summary .group-title, .collapsible-summary .section-title, .collapsible-summary #sample-title { margin: 0; }
+        .collapsible-summary .group-title, .collapsible-summary .subgroup-title, .collapsible-summary .section-title, .collapsible-summary #sample-title { margin: 0; }
         .section-chevron { width: 0.55rem; height: 0.55rem; flex: 0 0 0.55rem; border-right: 1.5px solid currentColor; border-bottom: 1.5px solid currentColor; transform: rotate(-45deg); transition: transform 180ms ease; }
         details[open] > .collapsible-summary > .section-chevron { transform: rotate(45deg); }
         .collapsible-group, .collapsible-section { display: flow-root; }
@@ -55,6 +56,9 @@
             to { opacity: 0; transform: translateY(-0.375rem); }
         }
         .group-content { padding: 0.5rem 0 0.25rem 1.45rem; }
+        .collapsible-subgroup { margin: 0.25rem 0 0.75rem; }
+        .collapsible-subgroup > .subgroup-content { padding: 0.25rem 0 0.25rem 1.25rem; }
+        .collapsible-subgroup .section-title { font-size: 1.35rem; }
         .collapsible-section { margin: 0.25rem 0 0.5rem; }
         .collapsible-section > ul { margin: 0.5rem 0 1.25rem; padding-left: 2.15rem; }
         .faq-answer { margin: 0.5rem 0 1.25rem; padding-left: 2.15rem; font-size: 1.15rem; line-height: 1.5; }
@@ -65,6 +69,7 @@
         .purchase-sample-btn:focus-visible { outline: 3px solid #111; outline-offset: 3px; }
         @media (max-width: 640px) {
             .group-content { padding-left: 0.75rem; }
+            .collapsible-subgroup > .subgroup-content { padding-left: 0.75rem; }
             .collapsible-section > ul { padding-left: 1.75rem; }
             .faq-answer { padding-left: 1.75rem; }
             .purchase-sample-btn { width: 100%; max-width: none; }
@@ -128,161 +133,193 @@
                     <h2 id="chip-type-title" class="group-title">RTL by Chip Type</h2>
                 </summary>
                 <div class="group-content">
-                    <details class="collapsible-section">
+                    <details class="collapsible-group collapsible-subgroup">
                         <summary class="collapsible-summary">
                             <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">TPU</h3>
+                            <h3 class="subgroup-title">AI &amp; Accelerators</h3>
                         </summary>
-                        <ul>
-                            <li><strong>Systolic arrays</strong>: Weight-stationary, output-stationary, and row-stationary dataflows for matrix multiplication in training and inference silicon</li>
-                            <li><strong>Tensor processing pipelines</strong>: Activation functions, accumulator chains, and configurable NxN matrix multiply units</li>
-                            <li><strong>AI accelerator SoCs</strong>: End-to-end TPU-style designs with on-chip SRAM, DMA engines, and host interfaces</li>
-                        </ul>
+                        <div class="group-content subgroup-content">
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">TPU</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>Systolic arrays</strong>: Weight-stationary, output-stationary, and row-stationary dataflows for matrix multiplication in training and inference silicon</li>
+                                    <li><strong>Tensor processing pipelines</strong>: Activation functions, accumulator chains, and configurable NxN matrix multiply units</li>
+                                    <li><strong>AI accelerator SoCs</strong>: End-to-end TPU-style designs with on-chip SRAM, DMA engines, and host interfaces</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">GPU</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>Shader cores &amp; SIMD pipelines</strong>: Warp schedulers, register files, and execution units for GPGPU compute</li>
+                                    <li><strong>Tensor &amp; matrix cores</strong>: Dedicated FP16/INT8 matrix multiply units for deep learning workloads</li>
+                                    <li><strong>2D/3D graphics engines</strong>: Rasterizers, framebuffer controllers, display pipelines, and video processing</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">NPU</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>CNN accelerators</strong>: Convolutional neural network engines with configurable kernel sizes, pooling, and activation layers</li>
+                                    <li><strong>Neural network processors</strong>: Spiking neural networks, MLP accelerators, and on-chip inference engines</li>
+                                    <li><strong>Edge ML hardware</strong>: Low-power neural engines for always-on inference, keyword spotting, and image classification</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">DPU</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>Xilinx DPU inference engines</strong>: DPUCZDX8G and variant configurations for CNN inference on Zynq and ZCU platforms</li>
+                                    <li><strong>Data processing units</strong>: DAG processing architectures, dual-clock domain processing, and memory pool controllers</li>
+                                    <li><strong>Network-attached processing</strong>: SmartNIC-style offload engines for packet parsing, classification, and transformation</li>
+                                </ul>
+                            </details>
+                        </div>
                     </details>
-                    <details class="collapsible-section">
+                    <details class="collapsible-group collapsible-subgroup">
                         <summary class="collapsible-summary">
                             <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">GPU</h3>
+                            <h3 class="subgroup-title">Processors &amp; Systems</h3>
                         </summary>
-                        <ul>
-                            <li><strong>Shader cores &amp; SIMD pipelines</strong>: Warp schedulers, register files, and execution units for GPGPU compute</li>
-                            <li><strong>Tensor &amp; matrix cores</strong>: Dedicated FP16/INT8 matrix multiply units for deep learning workloads</li>
-                            <li><strong>2D/3D graphics engines</strong>: Rasterizers, framebuffer controllers, display pipelines, and video processing</li>
-                        </ul>
+                        <div class="group-content subgroup-content">
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">CPU</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>RISC-V cores</strong>: Single-cycle through superscalar out-of-order implementations, privilege modes, and ISA extensions</li>
+                                    <li><strong>ARM Cortex &amp; custom ARM</strong>: Pipelined and multi-cycle ARM processors with SoC integration logic</li>
+                                    <li><strong>MIPS architectures</strong>: Classic 5-stage pipelines, multi-cycle designs, and full ISA implementations</li>
+                                    <li><strong>Custom ISA processors</strong>: 8-bit through 64-bit CPU designs, ALUs, branch predictors, and cache hierarchies</li>
+                                    <li><strong>VLIW processors</strong>: Very Long Instruction Word architectures with multi-issue execution units, instruction bundling, and static scheduling</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">MPU</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>8-bit &amp; 16-bit microprocessors</strong>: 8051, 6502, PIC, and AVR-compatible implementations in Verilog and VHDL</li>
+                                    <li><strong>32-bit microcontrollers</strong>: ARM Cortex-M0 based SoCs, OpenMSP430 designs, and embedded processor cores</li>
+                                    <li><strong>Microcomputer systems</strong>: Complete microprocessor designs with peripherals, memory controllers, and bus interfaces</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">MCU</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>8051 &amp; legacy cores</strong>: Classic 8051 implementations, turbo variants, and embedded cryptosystem integrations in Verilog and VHDL</li>
+                                    <li><strong>RISC-V &amp; ARM Cortex-M MCUs</strong>: Soft microcontroller SoCs with APB/AHB buses, GPIO, UART, SPI, I2C, timers, and interrupt controllers</li>
+                                    <li><strong>Peripheral &amp; IO subsystems</strong>: Standalone UART, SPI, I2C, GPIO, watchdog, and PWM timer IP blocks for embedded integration</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">SoC</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>Complete system-on-chip designs</strong>: Integrated CPU, memory, interconnect, peripheral, and accelerator subsystems in Verilog, VHDL, and SystemVerilog</li>
+                                    <li><strong>Bus fabrics &amp; interconnects</strong>: AXI, AHB, APB, Wishbone, NoC, crossbar, arbitration, and bridge logic for multi-IP integration</li>
+                                    <li><strong>Platform peripherals</strong>: UART, SPI, I2C, GPIO, timers, interrupt controllers, DMA engines, boot ROMs, and memory-mapped control blocks</li>
+                                </ul>
+                            </details>
+                        </div>
                     </details>
-                    <details class="collapsible-section">
+                    <details class="collapsible-group collapsible-subgroup">
                         <summary class="collapsible-summary">
                             <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">CPU</h3>
+                            <h3 class="subgroup-title">Memory</h3>
                         </summary>
-                        <ul>
-                            <li><strong>RISC-V cores</strong>: Single-cycle through superscalar out-of-order implementations, privilege modes, and ISA extensions</li>
-                            <li><strong>ARM Cortex &amp; custom ARM</strong>: Pipelined and multi-cycle ARM processors with SoC integration logic</li>
-                            <li><strong>MIPS architectures</strong>: Classic 5-stage pipelines, multi-cycle designs, and full ISA implementations</li>
-                            <li><strong>Custom ISA processors</strong>: 8-bit through 64-bit CPU designs, ALUs, branch predictors, and cache hierarchies</li>
-                            <li><strong>VLIW processors</strong>: Very Long Instruction Word architectures with multi-issue execution units, instruction bundling, and static scheduling</li>
-                        </ul>
+                        <div class="group-content subgroup-content">
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">DRAM</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>DDR &amp; LPDDR controllers</strong>: Command scheduling, bank management, refresh, burst handling, and AXI integration across modern memory interfaces</li>
+                                    <li><strong>SDRAM subsystems</strong>: Row activation, precharge, arbitration, timing enforcement, and initialization logic</li>
+                                    <li><strong>PHY-facing logic</strong>: DFI interfaces, calibration control, read and write training, and error reporting</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">SRAM</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>Single-port &amp; dual-port memories</strong>: Synthesizable synchronous SRAMs with configurable widths, depths, byte enables, and read modes</li>
+                                    <li><strong>Cache &amp; scratchpad arrays</strong>: Banked data and tag memories, local accelerator storage, and multi-client arbitration</li>
+                                    <li><strong>Reliability features</strong>: ECC, parity, scrubbing, memory BIST, and fault-injection logic</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">Flash &amp; Non-Volatile Memory</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>NOR &amp; NAND flash controllers</strong>: Command sequencing, page and block operations, buffering, ECC, and bad-block management</li>
+                                    <li><strong>EEPROM &amp; ROM subsystems</strong>: Memory-mapped interfaces, boot storage, initialization, and access-control logic</li>
+                                    <li><strong>Emerging memory controllers</strong>: Protocol and control logic for MRAM, FRAM, and ReRAM-based systems</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">Specialized Memory</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>HBM subsystems</strong>: Multi-channel scheduling, pseudo-channel control, high-bandwidth interconnects, and traffic arbitration</li>
+                                    <li><strong>CAM &amp; TCAM</strong>: Associative lookup, masked matching, priority encoding, and table update logic</li>
+                                    <li><strong>FIFO &amp; buffer memories</strong>: Synchronous and asynchronous FIFOs, clock-domain crossing, packet buffers, and streaming queues</li>
+                                </ul>
+                            </details>
+                        </div>
                     </details>
-                    <details class="collapsible-section">
+                    <details class="collapsible-group collapsible-subgroup">
                         <summary class="collapsible-summary">
                             <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">SoC</h3>
+                            <h3 class="subgroup-title">Implementation Platforms</h3>
                         </summary>
-                        <ul>
-                            <li><strong>Complete system-on-chip designs</strong>: Integrated CPU, memory, interconnect, peripheral, and accelerator subsystems in Verilog, VHDL, and SystemVerilog</li>
-                            <li><strong>Bus fabrics &amp; interconnects</strong>: AXI, AHB, APB, Wishbone, NoC, crossbar, arbitration, and bridge logic for multi-IP integration</li>
-                            <li><strong>Platform peripherals</strong>: UART, SPI, I2C, GPIO, timers, interrupt controllers, DMA engines, boot ROMs, and memory-mapped control blocks</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">DRAM</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>DDR &amp; LPDDR controllers</strong>: Command scheduling, bank management, refresh, burst handling, and AXI integration across modern memory interfaces</li>
-                            <li><strong>SDRAM subsystems</strong>: Row activation, precharge, arbitration, timing enforcement, and initialization logic</li>
-                            <li><strong>PHY-facing logic</strong>: DFI interfaces, calibration control, read and write training, and error reporting</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">SRAM</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>Single-port &amp; dual-port memories</strong>: Synthesizable synchronous SRAMs with configurable widths, depths, byte enables, and read modes</li>
-                            <li><strong>Cache &amp; scratchpad arrays</strong>: Banked data and tag memories, local accelerator storage, and multi-client arbitration</li>
-                            <li><strong>Reliability features</strong>: ECC, parity, scrubbing, memory BIST, and fault-injection logic</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">Flash &amp; Non-Volatile Memory</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>NOR &amp; NAND flash controllers</strong>: Command sequencing, page and block operations, buffering, ECC, and bad-block management</li>
-                            <li><strong>EEPROM &amp; ROM subsystems</strong>: Memory-mapped interfaces, boot storage, initialization, and access-control logic</li>
-                            <li><strong>Emerging memory controllers</strong>: Protocol and control logic for MRAM, FRAM, and ReRAM-based systems</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">Specialized Memory</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>HBM subsystems</strong>: Multi-channel scheduling, pseudo-channel control, high-bandwidth interconnects, and traffic arbitration</li>
-                            <li><strong>CAM &amp; TCAM</strong>: Associative lookup, masked matching, priority encoding, and table update logic</li>
-                            <li><strong>FIFO &amp; buffer memories</strong>: Synchronous and asynchronous FIFOs, clock-domain crossing, packet buffers, and streaming queues</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">DPU</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>Xilinx DPU inference engines</strong>: DPUCZDX8G and variant configurations for CNN inference on Zynq and ZCU platforms</li>
-                            <li><strong>Data processing units</strong>: DAG processing architectures, dual-clock domain processing, and memory pool controllers</li>
-                            <li><strong>Network-attached processing</strong>: SmartNIC-style offload engines for packet parsing, classification, and transformation</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">MPU</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>8-bit &amp; 16-bit microprocessors</strong>: 8051, 6502, PIC, and AVR-compatible implementations in Verilog and VHDL</li>
-                            <li><strong>32-bit microcontrollers</strong>: ARM Cortex-M0 based SoCs, OpenMSP430 designs, and embedded processor cores</li>
-                            <li><strong>Microcomputer systems</strong>: Complete microprocessor designs with peripherals, memory controllers, and bus interfaces</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">NPU</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>CNN accelerators</strong>: Convolutional neural network engines with configurable kernel sizes, pooling, and activation layers</li>
-                            <li><strong>Neural network processors</strong>: Spiking neural networks, MLP accelerators, and on-chip inference engines</li>
-                            <li><strong>Edge ML hardware</strong>: Low-power neural engines for always-on inference, keyword spotting, and image classification</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">ASIC</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>Complete ASIC flows</strong>: RTL-to-GDSII designs including synthesis, place-and-route, and signoff for tapeout</li>
-                            <li><strong>Standard cell &amp; physical design</strong>: Cell libraries, floorplanning, power grid synthesis, and timing closure at advanced nodes</li>
-                            <li><strong>Application-specific designs</strong>: Custom cryptographic engines, DSP blocks, communication controllers, and sensor interfaces</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">MCU</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>8051 &amp; legacy cores</strong>: Classic 8051 implementations, turbo variants, and embedded cryptosystem integrations in Verilog and VHDL</li>
-                            <li><strong>RISC-V &amp; ARM Cortex-M MCUs</strong>: Soft microcontroller SoCs with APB/AHB buses, GPIO, UART, SPI, I2C, timers, and interrupt controllers</li>
-                            <li><strong>Peripheral &amp; IO subsystems</strong>: Standalone UART, SPI, I2C, GPIO, watchdog, and PWM timer IP blocks for embedded integration</li>
-                        </ul>
-                    </details>
-                    <details class="collapsible-section">
-                        <summary class="collapsible-summary">
-                            <span class="section-chevron" aria-hidden="true"></span>
-                            <h3 class="section-title">FPGA</h3>
-                        </summary>
-                        <ul>
-                            <li><strong>Xilinx &amp; Intel/Altera platforms</strong>: Vivado and Quartus project files, IP integrations, and board-level designs across device families</li>
-                            <li><strong>FPGA-based accelerators</strong>: CNN inference, cryptomining, signal processing, and high-speed data acquisition on reconfigurable fabric</li>
-                            <li><strong>Prototyping &amp; IP cores</strong>: Reusable FPGA IP for Ethernet, USB, HDMI, SDRAM, SPI, I2C, UART, and PCIe interfaces</li>
-                        </ul>
+                        <div class="group-content subgroup-content">
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">ASIC</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>Complete ASIC flows</strong>: RTL-to-GDSII designs including synthesis, place-and-route, and signoff for tapeout</li>
+                                    <li><strong>Standard cell &amp; physical design</strong>: Cell libraries, floorplanning, power grid synthesis, and timing closure at advanced nodes</li>
+                                    <li><strong>Application-specific designs</strong>: Custom cryptographic engines, DSP blocks, communication controllers, and sensor interfaces</li>
+                                </ul>
+                            </details>
+                            <details class="collapsible-section">
+                                <summary class="collapsible-summary">
+                                    <span class="section-chevron" aria-hidden="true"></span>
+                                    <h4 class="section-title">FPGA</h4>
+                                </summary>
+                                <ul>
+                                    <li><strong>Xilinx &amp; Intel/Altera platforms</strong>: Vivado and Quartus project files, IP integrations, and board-level designs across device families</li>
+                                    <li><strong>FPGA-based accelerators</strong>: CNN inference, cryptomining, signal processing, and high-speed data acquisition on reconfigurable fabric</li>
+                                    <li><strong>Prototyping &amp; IP cores</strong>: Reusable FPGA IP for Ethernet, USB, HDMI, SDRAM, SPI, I2C, UART, and PCIe interfaces</li>
+                                </ul>
+                            </details>
+                        </div>
                     </details>
                     <p style="font-style: italic; font-size: 1.35rem;">Countless more architectures available on request.</p>
                 </div>
