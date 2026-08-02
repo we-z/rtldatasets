@@ -15,6 +15,7 @@ test('CSP permits only the fixed Stripe Checkout redirect destination', async ()
 test('pages with protected POST forms retain a same-origin Origin header', async () => {
   const headers = await readFile(new URL('../public/_headers', import.meta.url), 'utf8');
   assert.match(headers, /^  Referrer-Policy: same-origin$/mu);
+  assert.match(headers, /^\/sample\n  Cache-Control: private, no-store, max-age=0$/mu);
   assert.doesNotMatch(headers, /Referrer-Policy: no-referrer/u);
 });
 

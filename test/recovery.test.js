@@ -52,6 +52,8 @@ test('checkout completion and webhook recovery restore access without URL attemp
   assert.match(completion, /fetch\('\/api\/checkout-success'/u);
   assert.match(completion, /Retrying automatically/u);
   assert.match(worker, /purchase-complete\?session_id=\{CHECKOUT_SESSION_ID\}/u);
+  assert.match(worker, /cancel_url: `\$\{config\.siteOrigin\}\/sample\?checkout=cancelled`/u);
+  assert.doesNotMatch(worker, /\?checkout=cancelled#sample/u);
   assert.doesNotMatch(worker, /purchase-complete[^\n]*attempt_id/u);
   assert.doesNotMatch(handlers, /sessionId[^\n]*JSON/u);
 });

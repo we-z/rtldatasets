@@ -123,8 +123,6 @@
     .then((data) => {
       if (data.available !== true) throw new Error('Checkout unavailable');
       button.disabled = false;
-      button.style.cursor = 'pointer';
-      button.style.opacity = '1';
       button.textContent = 'Purchase the five-task sample';
       status.textContent = checkoutCancelled
         ? 'Checkout was canceled. No purchase was completed; you may try again.'
@@ -132,8 +130,6 @@
     })
     .catch(() => {
       button.disabled = true;
-      button.style.cursor = 'not-allowed';
-      button.style.opacity = '0.55';
       button.textContent = 'Checkout temporarily unavailable';
       status.textContent = checkoutCancelled
         ? 'Checkout was canceled. No purchase was completed. Email root@puul.ai if you need help.'
@@ -143,8 +139,6 @@
   form.addEventListener('submit', () => {
     rememberAttempt(attemptInput.value);
     button.disabled = true;
-    button.style.cursor = 'not-allowed';
-    button.style.opacity = '0.55';
     button.textContent = 'Opening secure checkout…';
     status.textContent = 'Redirecting to Stripe. Please do not submit twice.';
   });

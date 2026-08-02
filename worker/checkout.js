@@ -56,7 +56,7 @@ export async function createCheckout(request, env) {
     },
     automatic_tax: { enabled: config.automaticTax },
     success_url: `${config.siteOrigin}/purchase-complete?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${config.siteOrigin}/?checkout=cancelled#sample`,
+    cancel_url: `${config.siteOrigin}/sample?checkout=cancelled`,
   }, {
     idempotencyKey: `checkout:${PRODUCT.sku}:${attemptId}`,
   });
