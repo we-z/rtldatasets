@@ -1,5 +1,5 @@
 * { box-sizing: border-box; }
-body { margin: 0; padding: 2rem; color: #111; background: white; font-family: Arial, Helvetica, sans-serif; }
+body { margin: 0; padding: 2rem; color: #111; background: white; font-family: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
 button, input, select, textarea { font-family: inherit; }
 main { max-width: 720px; margin: 0 auto; }
 h1 { font-size: 2rem; }
