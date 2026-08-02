@@ -59,6 +59,8 @@ test('the landing page highlights the three strongest scale claims', async () =>
   assert.match(landing, /<li><strong>100,000\+<\/strong> RLVR tasks that hill climb<\/li>/u);
   assert.doesNotMatch(landing, /verified RTL tasks that hill climb/u);
   assert.doesNotMatch(landing, /100,000,000,000\+|<strong>[^<]*<\/strong> tokens/u);
+  assert.ok(landing.indexOf('100,000+</strong> RLVR tasks') < landing.indexOf('50,000+</strong> code bases'));
+  assert.ok(landing.indexOf('50,000+</strong> code bases') < landing.indexOf('10,000,000+</strong> raw code files'));
 });
 
 test('the contact section uses simple accessible text links', async () => {
@@ -153,7 +155,8 @@ test('all landing content sections are closed, animated native disclosures', asy
   assert.equal((landing.match(/Our data is fully synthetic, novel, and proprietary\./gu) || []).length, 1);
   assert.equal((landing.match(/Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights\./gu) || []).length, 1);
   assert.equal((landing.match(/Trained models and outputs remain yours\./gu) || []).length, 1);
-  assert.ok(landing.indexOf('id="faq-title"') > landing.indexOf('id="training-title"'));
+  assert.ok(landing.indexOf('id="training-title"') < landing.indexOf('id="chip-type-title"'));
+  assert.ok(landing.indexOf('id="chip-type-title"') < landing.indexOf('id="faq-title"'));
   assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Explore Eval sample tasks'));
 });
 
