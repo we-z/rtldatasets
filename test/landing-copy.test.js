@@ -18,3 +18,15 @@ test('public sample terms do not name third-party licenses', async () => {
 
   assert.doesNotMatch(terms, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
 });
+
+test('the landing and supporting pages share the purchase button font', async () => {
+  const [landing, supporting] = await Promise.all([
+    readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
+    readFile(new URL('../public/assets/legal.css', import.meta.url), 'utf8'),
+  ]);
+
+  for (const stylesheet of [landing, supporting]) {
+    assert.match(stylesheet, /font-family: Arial, Helvetica, sans-serif;/u);
+    assert.match(stylesheet, /button, input, select, textarea \{ font-family: inherit; \}/u);
+  }
+});

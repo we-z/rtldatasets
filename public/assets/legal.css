@@ -1,5 +1,6 @@
 * { box-sizing: border-box; }
-body { margin: 0; padding: 2rem; color: #111; background: white; font-family: serif; }
+body { margin: 0; padding: 2rem; color: #111; background: white; font-family: Arial, Helvetica, sans-serif; }
+button, input, select, textarea { font-family: inherit; }
 main { max-width: 720px; margin: 0 auto; }
 h1 { font-size: 2rem; }
 h2 { font-size: 1.35rem; margin-top: 2rem; }
