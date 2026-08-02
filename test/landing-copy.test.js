@@ -102,9 +102,9 @@ test('all landing content sections are closed, animated native disclosures', asy
   ]);
 
   assert.equal((landing.match(/<details class="collapsible-group">/gu) || []).length, 3);
-  assert.equal((landing.match(/<details class="collapsible-section">/gu) || []).length, 15);
-  assert.equal((landing.match(/<summary class="collapsible-summary">/gu) || []).length, 18);
-  assert.equal((landing.match(/class="section-chevron" aria-hidden="true"/gu) || []).length, 18);
+  assert.equal((landing.match(/<details class="collapsible-section">/gu) || []).length, 19);
+  assert.equal((landing.match(/<summary class="collapsible-summary">/gu) || []).length, 22);
+  assert.equal((landing.match(/class="section-chevron" aria-hidden="true"/gu) || []).length, 22);
   assert.doesNotMatch(landing, /<details[^>]*\sopen(?:\s|=|>)/iu);
   assert.match(landing, /\.collapsible-summary \{[^}]*min-height: 44px;[^}]*cursor: pointer;/u);
   assert.match(landing, /\.collapsible-summary \{[^}]*background: transparent;[^}]*-webkit-tap-highlight-color: transparent;/u);
@@ -147,6 +147,23 @@ test('all landing content sections are closed, animated native disclosures', asy
   ]) {
     assert.match(landing, new RegExp(`<h2[^>]*>${heading}<\\/h2>`, 'u'));
   }
+  for (const heading of [
+    'DRAM',
+    'SRAM',
+    'Flash &amp; Non-Volatile Memory',
+    'Specialized Memory',
+  ]) {
+    assert.match(landing, new RegExp(`<h3 class="section-title">${heading}<\\/h3>`, 'u'));
+  }
+  assert.match(landing, /<strong>DDR &amp; LPDDR controllers<\/strong>/u);
+  assert.match(landing, /<strong>Single-port &amp; dual-port memories<\/strong>/u);
+  assert.match(landing, /<strong>NOR &amp; NAND flash controllers<\/strong>/u);
+  assert.match(landing, /<strong>HBM subsystems<\/strong>/u);
+  assert.ok(landing.indexOf('>SoC</h3>') < landing.indexOf('>DRAM</h3>'));
+  assert.ok(landing.indexOf('>DRAM</h3>') < landing.indexOf('>SRAM</h3>'));
+  assert.ok(landing.indexOf('>SRAM</h3>') < landing.indexOf('>Flash &amp; Non-Volatile Memory</h3>'));
+  assert.ok(landing.indexOf('>Flash &amp; Non-Volatile Memory</h3>') < landing.indexOf('>Specialized Memory</h3>'));
+  assert.ok(landing.indexOf('>Specialized Memory</h3>') < landing.indexOf('>DPU</h3>'));
   assert.doesNotMatch(landing, /id="waveform-title"|>Waveform &amp; Signal Processing<|>Oscilloscopes<|>ADC<|>DAC<|>DDS &amp; Waveform Generation<|>Simulation &amp; Waveform Tooling</u);
   assert.doesNotMatch(landing, />For training AI on chip design</u);
   assert.match(landing, /<h3 class="section-title">Where is your data from\?<\/h3>[\s\S]*<p class="faq-answer">Our data is fully synthetic, novel, and proprietary\.<\/p>/u);
