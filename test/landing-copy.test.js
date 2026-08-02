@@ -51,35 +51,32 @@ test('the landing and sample pages use Stripe marketing typography while support
   }
 });
 
-test('the contact section uses accessible black primary and neutral secondary actions', async () => {
+test('the contact section uses simple accessible text links', async () => {
   const landing = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
 
-  assert.equal((landing.match(/class="contact-actions"/gu) || []).length, 1);
-  assert.equal((landing.match(/class="contact-btn contact-btn--primary"/gu) || []).length, 1);
-  assert.equal((landing.match(/class="contact-btn contact-btn--secondary"/gu) || []).length, 1);
-  assert.doesNotMatch(landing, /contact-arrow/u);
+  assert.equal((landing.match(/class="contact-line"/gu) || []).length, 2);
+  assert.equal((landing.match(/class="contact-link"/gu) || []).length, 2);
+  assert.doesNotMatch(landing, /contact-actions|contact-btn|contact-arrow/u);
   assert.match(landing, /href="mailto:root@puul\.ai\?subject=RTL%20Datasets%20request&amp;body=/u);
   assert.match(landing, /body=Hello%2C%0D%0A%0D%0AI%20would%20like%20to%20discuss%20a%20request\./u);
   assert.doesNotMatch(landing, /Hello%20RTL%20Datasets%20team/u);
   assert.match(landing, /Company%20or%20organization%3A/u);
   assert.match(landing, /Verification%20and%20tooling%3A/u);
   assert.match(landing, /Licensing%20preference%3A/u);
-  assert.equal((landing.match(/href="sms:\+16508809229" class="contact-btn contact-btn--secondary"/gu) || []).length, 1);
+  assert.equal((landing.match(/href="sms:\+16508809229" class="contact-link"/gu) || []).length, 1);
+  assert.match(landing, /Email: <a[^>]*class="contact-link">root@puul\.ai<\/a>/u);
+  assert.match(landing, /Signal\/text: <a[^>]*class="contact-link">650-880-9229<\/a>/u);
+  assert.match(landing, /\.contact \{[^}]*font-size: 1\.2rem;/u);
   assert.match(landing, /\.contact-label \{[^}]*font-size: 1\.35rem;/u);
-  assert.match(landing, /\.contact-btn \{[^}]*min-height: 46px;[^}]*border-radius: 8px;[^}]*font-size: 1\.05rem;/u);
-  assert.match(landing, /\.contact-btn--primary \{ color: #fff; background: #000; \}/u);
-  assert.match(landing, /\.contact-btn--secondary \{ color: #111; background: #fff; border-color: #c9c9c9; \}/u);
-  assert.match(landing, /\.contact-btn:focus-visible \{ outline: 3px solid #111; outline-offset: 3px; \}/u);
+  assert.match(landing, /\.contact-link \{ color: #111; font-weight: 400; text-decoration: underline;/u);
+  assert.match(landing, /\.contact-link:focus-visible \{ outline: 2px solid #111; outline-offset: 3px;/u);
   assert.doesNotMatch(landing, /box-shadow/iu);
   assert.doesNotMatch(landing, /#533afd|#4032c8|#b9b9f9|#2e2b8c|rgba\(84, 82, 251/iu);
-  assert.match(landing, /@media \(max-width: 640px\)/u);
-  assert.match(landing, /\.contact-actions \{ align-items: flex-start; flex-direction: column; \}/u);
-  assert.match(landing, /\.contact-btn \{ width: auto; max-width: 100%; \}/u);
-  assert.match(landing, /@media \(prefers-reduced-motion: reduce\)/u);
   assert.match(landing, /Countless more architectures available on request\./u);
   assert.equal((landing.match(/Contact us via:/gu) || []).length, 1);
   assert.match(landing, /<a href="\/sample" class="purchase-sample-btn">Explore Eval sample tasks<\/a>/u);
-  assert.match(landing, /\.purchase-sample-btn \{[^}]*width: auto;[^}]*border-radius: 8px;/u);
+  assert.match(landing, /\.purchase-sample-btn \{[^}]*width: fit-content;[^}]*margin: 3rem auto 2\.5rem;[^}]*border-radius: 8px;/u);
+  assert.match(landing, /@media \(max-width: 640px\) \{[\s\S]*?\.purchase-sample-btn \{ width: 100%; max-width: none; \}/u);
   assert.ok(landing.indexOf('Contact us via:') > landing.lastIndexOf('</details>'));
   assert.ok(landing.indexOf('Explore Eval sample tasks') < landing.indexOf('Contact us via:'));
   assert.doesNotMatch(landing, /id="sample-checkout-form"|id="purchase-button"|\/assets\/checkout\.js/u);
@@ -93,9 +90,9 @@ test('all landing content sections are closed, animated native disclosures', asy
   ]);
 
   assert.equal((landing.match(/<details class="collapsible-group">/gu) || []).length, 3);
-  assert.equal((landing.match(/<details class="collapsible-section">/gu) || []).length, 17);
-  assert.equal((landing.match(/<summary class="collapsible-summary">/gu) || []).length, 20);
-  assert.equal((landing.match(/class="section-chevron" aria-hidden="true"/gu) || []).length, 20);
+  assert.equal((landing.match(/<details class="collapsible-section">/gu) || []).length, 15);
+  assert.equal((landing.match(/<summary class="collapsible-summary">/gu) || []).length, 18);
+  assert.equal((landing.match(/class="section-chevron" aria-hidden="true"/gu) || []).length, 18);
   assert.doesNotMatch(landing, /<details[^>]*\sopen(?:\s|=|>)/iu);
   assert.match(landing, /\.collapsible-summary \{[^}]*min-height: 44px;[^}]*cursor: pointer;/u);
   assert.match(landing, /\.collapsible-summary \{[^}]*background: transparent;[^}]*-webkit-tap-highlight-color: transparent;/u);
@@ -107,6 +104,8 @@ test('all landing content sections are closed, animated native disclosures', asy
   assert.match(landing, /\.collapsible-group, \.collapsible-section \{ display: flow-root; \}/u);
   assert.match(landing, /\.collapsible-group\.is-animating, \.collapsible-section\.is-animating \{ overflow: hidden; will-change: height; transition: height var\(--details-duration, 320ms\) cubic-bezier\(0\.25, 1, 0\.5, 1\); \}/u);
   assert.match(landing, /details\.is-closing > \.collapsible-summary > \.section-chevron \{ transform: rotate\(-45deg\); \}/u);
+  assert.match(landing, /\.collapsible-section\.is-opening > \.faq-answer \{ animation: disclosure-content-in/u);
+  assert.match(landing, /\.collapsible-section\.is-closing > \.faq-answer \{ animation: disclosure-content-out/u);
   assert.match(landing, /@keyframes disclosure-content-in \{[^}]*opacity: 0; transform: translateY\(-0\.5rem\);/su);
   assert.match(landing, /@keyframes disclosure-content-out \{[^}]*opacity: 1; transform: translateY\(0\);/su);
   assert.equal((landing.match(/<script src="\/assets\/details-animation\.js" defer><\/script>/gu) || []).length, 1);
@@ -131,11 +130,21 @@ test('all landing content sections are closed, animated native disclosures', asy
 
   for (const heading of [
     'RTL by Chip Type',
-    'Waveform &amp; Signal Processing',
-    'For training AI on chip design',
+    'Training AI on chip design',
+    'FAQ',
   ]) {
     assert.match(landing, new RegExp(`<h2[^>]*>${heading}<\\/h2>`, 'u'));
   }
+  assert.doesNotMatch(landing, /id="waveform-title"|>Waveform &amp; Signal Processing<|>Oscilloscopes<|>ADC<|>DAC<|>DDS &amp; Waveform Generation<|>Simulation &amp; Waveform Tooling</u);
+  assert.doesNotMatch(landing, />For training AI on chip design</u);
+  assert.match(landing, /<h3 class="section-title">Is your data synthetic\?<\/h3>[\s\S]*<p class="faq-answer">Our data is fully synthetic, novel, and proprietary\.<\/p>/u);
+  assert.match(landing, /<h3 class="section-title">What do your licenses cover\?<\/h3>[\s\S]*<p class="faq-answer">Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights\.<\/p>/u);
+  assert.match(landing, /<h3 class="section-title">Who owns trained models and outputs\?<\/h3>[\s\S]*<p class="faq-answer">Trained models and outputs remain yours\.<\/p>/u);
+  assert.equal((landing.match(/Our data is fully synthetic, novel, and proprietary\./gu) || []).length, 1);
+  assert.equal((landing.match(/Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights\./gu) || []).length, 1);
+  assert.equal((landing.match(/Trained models and outputs remain yours\./gu) || []).length, 1);
+  assert.ok(landing.indexOf('id="faq-title"') > landing.indexOf('id="training-title"'));
+  assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Explore Eval sample tasks'));
 });
 
 test('sample navigation and canceled checkout returns use the standalone page', async () => {
