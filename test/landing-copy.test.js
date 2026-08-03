@@ -87,7 +87,7 @@ test('the contact section uses simple accessible text links', async () => {
   assert.match(landing, /Countless more architectures available on request\./u);
   assert.equal((landing.match(/Contact us via:/gu) || []).length, 1);
   assert.match(landing, /<a href="\/sample" class="purchase-sample-btn">Explore Eval sample tasks<\/a>/u);
-  assert.match(landing, /\.purchase-sample-btn \{[^}]*width: fit-content;[^}]*margin: 3rem auto 2\.5rem;[^}]*border-radius: 8px;/u);
+  assert.match(landing, /\.purchase-sample-btn \{[^}]*width: fit-content;[^}]*margin: 3rem 0 2\.5rem;[^}]*border-radius: 8px;/u);
   assert.match(landing, /@media \(max-width: 640px\) \{[\s\S]*?\.purchase-sample-btn \{ width: 100%; max-width: none; \}/u);
   assert.ok(landing.indexOf('Contact us via:') > landing.lastIndexOf('</details>'));
   assert.ok(landing.indexOf('Explore Eval sample tasks') < landing.indexOf('Contact us via:'));
