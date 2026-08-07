@@ -25,7 +25,19 @@ export async function recordPurchase(env, paid, config, nowMs = Date.now()) {
       payment_intent_id = excluded.payment_intent_id,
       charge_id = excluded.charge_id,
       customer_email = excluded.customer_email,
+      product_id = excluded.product_id,
+      sku = excluded.sku,
+      artifact_version = excluded.artifact_version,
+      artifact_sha256 = excluded.artifact_sha256,
+      artifact_asset_path = excluded.artifact_asset_path,
+      archive_bytes = excluded.archive_bytes,
+      terms_version = excluded.terms_version,
+      currency = excluded.currency,
+      amount_subtotal = excluded.amount_subtotal,
       amount_total = excluded.amount_total,
+      livemode = excluded.livemode,
+      redeem_expires_at = excluded.redeem_expires_at,
+      stripe_created_at = excluded.stripe_created_at,
       updated_at = excluded.updated_at
   `).bind(
     paid.session.id,
@@ -78,7 +90,7 @@ export async function findRecoverablePurchase(env, attemptIds, livemode, nowMs =
 
 export async function recordDownload(env, sessionId, nowMs = Date.now()) {
   const timestamp = nowIso(nowMs);
-  await env.ORDERS.prepare(`
+  const result = await env.ORDERS.prepare(`
     UPDATE fulfillments
     SET download_count = download_count + 1,
         first_download_at = COALESCE(first_download_at, ?),
@@ -86,4 +98,8 @@ export async function recordDownload(env, sessionId, nowMs = Date.now()) {
         updated_at = ?
     WHERE checkout_session_id = ?
   `).bind(timestamp, timestamp, timestamp, sessionId).run();
+  if (result?.meta?.changes !== 1) {
+    throw new HttpError(503, 'delivery_record_unavailable');
+  }
+  return timestamp;
 }

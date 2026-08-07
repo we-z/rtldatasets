@@ -35,12 +35,29 @@ function hexToBase64(hex) {
   return btoa(binary);
 }
 
+export function artifactDownloadHeaders(config, asset) {
+  const headers = new Headers({
+    ...NO_STORE_HEADERS,
+    'Content-Type': PRODUCT.archiveContentType,
+    'Content-Disposition': `attachment; filename="${PRODUCT.archiveFilename}"`,
+    'Content-Length': String(config.archiveBytes),
+    'Accept-Ranges': 'none',
+    Digest: `sha-256=${hexToBase64(config.artifactSha256)}`,
+    'X-Artifact-SHA256': config.artifactSha256,
+  });
+  const etag = asset.headers.get('ETag');
+  if (etag) headers.set('ETag', etag);
+  return headers;
+}
+
 export async function storeStatus(request, env) {
   assertMethod(request, 'GET');
   const { available } = getStoreAvailability(env);
   return json({
     available,
     product: PRODUCT.name,
+    artifactVersion: PRODUCT.artifactVersion,
+    archiveFilename: PRODUCT.archiveFilename,
   });
 }
 
@@ -238,19 +255,11 @@ export async function downloadSample(request, env, ctx) {
   await loadPaidSession(createStripe(config), payload.sessionId, config);
   const { asset, bytes } = await loadVerifiedArtifact(env, config);
 
-  ctx.waitUntil(recordDownload(env, payload.sessionId).catch(() => undefined));
-  const headers = new Headers({
-    ...NO_STORE_HEADERS,
-    'Content-Type': 'application/gzip',
-    'Content-Disposition': `attachment; filename="${PRODUCT.archiveFilename}"`,
-    'Content-Length': String(config.archiveBytes),
-    'Accept-Ranges': 'none',
-    Digest: `sha-256=${hexToBase64(config.artifactSha256)}`,
-    'X-Artifact-SHA256': config.artifactSha256,
+  await recordDownload(env, payload.sessionId);
+  return new Response(bytes, {
+    status: 200,
+    headers: artifactDownloadHeaders(config, asset),
   });
-  const etag = asset.headers.get('ETag');
-  if (etag) headers.set('ETag', etag);
-  return new Response(bytes, { status: 200, headers });
 }
 
 export function apiNotFound() {

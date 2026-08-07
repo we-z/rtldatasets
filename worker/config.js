@@ -18,7 +18,7 @@ function requiredString(env, key) {
 export function getSiteOrigin(env) {
   const raw = typeof env.SITE_URL === 'string' && env.SITE_URL.trim()
     ? env.SITE_URL.trim()
-    : 'https://www.rtldatasets.com';
+    : 'https://www.rtltasks.com';
   let url;
   try {
     url = new URL(raw);
@@ -61,6 +61,9 @@ export function getStoreConfig(env) {
   if (!/^[a-f0-9]{64}$/.test(artifactSha256)) {
     throw new ConfigError('SAMPLE_ARCHIVE_SHA256 must be 64 lowercase hex characters');
   }
+  if (artifactSha256 !== PRODUCT.archiveSha256) {
+    throw new ConfigError('SAMPLE_ARCHIVE_SHA256 does not match the released artifact');
+  }
   const artifactAssetPath = requiredString(env, 'SAMPLE_ASSET_PATH');
   if (
     !artifactAssetPath.startsWith('/__private/') ||
@@ -74,12 +77,21 @@ export function getStoreConfig(env) {
   if (!artifactAssetPath.includes(`/sha256/${artifactSha256}/`)) {
     throw new ConfigError('SAMPLE_ASSET_PATH must contain its immutable SHA-256 path');
   }
+  if (!artifactAssetPath.includes(`/v${PRODUCT.artifactVersion}/`)) {
+    throw new ConfigError('SAMPLE_ASSET_PATH must contain the released artifact version');
+  }
   if (!artifactAssetPath.endsWith(`/${PRODUCT.archiveFilename}`)) {
     throw new ConfigError('SAMPLE_ASSET_PATH must end with the fixed archive filename');
+  }
+  if (artifactAssetPath !== PRODUCT.artifactAssetPath) {
+    throw new ConfigError('SAMPLE_ASSET_PATH does not match the released artifact');
   }
   const archiveBytes = Number(requiredString(env, 'SAMPLE_ARCHIVE_BYTES'));
   if (!Number.isSafeInteger(archiveBytes) || archiveBytes <= 0) {
     throw new ConfigError('SAMPLE_ARCHIVE_BYTES must be a positive integer');
+  }
+  if (archiveBytes !== PRODUCT.archiveBytes) {
+    throw new ConfigError('SAMPLE_ARCHIVE_BYTES does not match the released artifact');
   }
 
   return Object.freeze({

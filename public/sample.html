@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RLVR Evaluation Sample | RTL Datasets</title>
-    <meta name="description" content="A five-task SoC design and verification RLVR evaluation sample from RTL Datasets">
+    <title>RLVR Diagnostic Sample | RTL Datasets</title>
+    <meta name="description" content="A five-task SoC design and verification RLVR diagnostic sample from RTL Datasets">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.rtldatasets.com/sample">
-    <meta property="og:title" content="RLVR Evaluation Sample | RTL Datasets">
-    <meta property="og:description" content="A five-task SoC design and verification RLVR evaluation sample from RTL Datasets">
-    <meta name="twitter:title" content="RLVR Evaluation Sample | RTL Datasets">
-    <meta name="twitter:description" content="A five-task SoC design and verification RLVR evaluation sample from RTL Datasets">
-    <link rel="canonical" href="https://www.rtldatasets.com/sample">
+    <meta property="og:url" content="https://www.rtltasks.com/sample">
+    <meta property="og:title" content="RLVR Diagnostic Sample | RTL Datasets">
+    <meta property="og:description" content="A five-task SoC design and verification RLVR diagnostic sample from RTL Datasets">
+    <meta name="twitter:title" content="RLVR Diagnostic Sample | RTL Datasets">
+    <meta name="twitter:description" content="A five-task SoC design and verification RLVR diagnostic sample from RTL Datasets">
+    <link rel="canonical" href="https://www.rtltasks.com/sample">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { min-height: 100vh; padding: 2rem; display: flex; justify-content: center; align-items: flex-start; color: #111; background: #fff; font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 300; font-feature-settings: "ss01" on; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
@@ -41,9 +41,9 @@
 <body>
     <main id="sample" class="content" aria-labelledby="sample-title">
         <a href="/" class="back-link">Back to RTL Datasets</a>
-        <h1 id="sample-title">SoC Design + Verification RLVR Evaluation Sample: 5 Tasks</h1>
+        <h1 id="sample-title">SoC Design + Verification RLVR Diagnostic Sample: 5 Tasks</h1>
         <p>
-            An evaluation package spanning UART, memory, and RV32 CPU work. It contains three RTL design or repair tasks and two verification-authoring tasks built around Verilog/SystemVerilog, Python, cocotb, Icarus Verilog, Verilator, and Yosys.
+            A diagnostic package spanning UART, memory, and RV32 CPU work. It contains three RTL design or repair tasks and two verification-authoring tasks built around Verilog/SystemVerilog, Python, cocotb, Icarus Verilog, Verilator, and Yosys.
         </p>
         <section aria-labelledby="included-title">
             <h2 id="included-title">Included</h2>
@@ -52,6 +52,7 @@
                 <li>Task metadata, locked reward contracts, environment requirements, provenance, and admission summaries</li>
                 <li>Protocol and trajectory schemas, aggregate evaluation results, and sanitized per-snapshot reward trajectories from one fresh attempt per task</li>
                 <li>A SHA-256 manifest covering the delivered files</li>
+                <li>Artifact version 1.0.2, delivered as <code>soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip</code></li>
             </ul>
         </section>
         <section aria-labelledby="not-included-title">
@@ -63,16 +64,19 @@
             </ul>
         </section>
         <p>
-            The sample includes third-party source material. Applicable third-party terms and notices govern the corresponding files. The sample license governs operator-authored packaging, curation, metadata, schemas, verification contracts, and evaluation evidence without reducing rights provided by those terms.
+            The sample includes third-party source material. Applicable third-party terms and notices govern the corresponding files. The sample license governs operator-authored packaging, curation, metadata, schemas, verification contracts, and diagnostic evidence without reducing rights provided by those terms.
         </p>
         <form action="/api/create-checkout-session" method="post" id="sample-checkout-form">
             <input type="hidden" name="attempt_id" id="checkout-attempt-id" value="">
             <input type="hidden" name="terms_version" value="1.0.0">
+            <input type="hidden" name="terms_sha256" value="9641c0bf29ce31557b7f6bdc221b429c86456c48c9019355c3e00c5bdd6e0530">
+            <input type="hidden" name="order_binding_version" value="1.0.0">
+            <input type="hidden" name="order_binding_sha256" value="c58f427f07c8199ba756b82ff0be822df80016ee2dfe3342b11c826a19fc6f0f">
             <fieldset>
                 <legend>Required purchase agreement</legend>
                 <label class="agreement-label">
                     <input type="checkbox" name="terms_accepted" value="yes" required>
-                    I understand that this is a five-task evaluation sample, not a production benchmark or turnkey hidden-reward runtime; that it excludes private graders, hidden tests, mutation banks, gold solutions, completed model solutions, raw agent messages, candidate diffs, provider identifiers, credentials, and private toolchain images; and that my purchase is governed by the <a href="/sample-license">sample license and limitations</a>, <a href="/refund-policy">digital delivery and refund policy</a>, and <a href="/privacy">privacy notice</a>. I have reviewed and accept those terms.
+                    I understand that this is a five-task diagnostic sample, not a production benchmark or turnkey hidden-reward runtime; that it excludes private graders, hidden tests, mutation banks, gold solutions, completed model solutions, raw agent messages, candidate diffs, provider identifiers, credentials, and private toolchain images. I have reviewed and accept both the <a href="/sample-license.html#sample-license">Sample License and Limitations version 1.0.0</a> and the <a href="/sample-license.html#order-binding">Terms, Parties, and Order Binding supplement version 1.0.0</a>. I also acknowledge the <a href="/refund-policy.html">digital delivery and refund policy</a> and <a href="/privacy.html">privacy notice</a>.
                 </label>
             </fieldset>
             <button type="submit" id="purchase-button" disabled>JavaScript required for checkout</button>

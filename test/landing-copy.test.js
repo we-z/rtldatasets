@@ -1,34 +1,102 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
+
+const termsSha256 = '9641c0bf29ce31557b7f6bdc221b429c86456c48c9019355c3e00c5bdd6e0530';
+const orderBindingSha256 = 'c58f427f07c8199ba756b82ff0be822df80016ee2dfe3342b11c826a19fc6f0f';
+const archiveFilename = 'soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip';
 
 test('the standalone sample page preserves the complete purchase flow', async () => {
   const sample = await readFile(new URL('../public/sample.html', import.meta.url), 'utf8');
 
-  assert.match(sample, /RLVR Evaluation Sample: 5 Tasks/u);
-  assert.doesNotMatch(sample, /diagnostic/iu);
+  assert.match(sample, /RLVR Diagnostic Sample: 5 Tasks/u);
+  assert.doesNotMatch(sample, /RLVR Evaluation Sample: 5 Tasks/u);
+  assert.match(sample, /Artifact version 1\.0\.2/u);
+  assert.match(sample, new RegExp(archiveFilename.replaceAll('.', '\\.'), 'u'));
   assert.doesNotMatch(sample, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
   assert.doesNotMatch(sample, /—/u);
   assert.doesNotMatch(sample, /box-shadow|#533afd|#4032c8|#b9b9f9|#2e2b8c/iu);
-  assert.match(sample, /<link rel="canonical" href="https:\/\/www\.rtldatasets\.com\/sample">/u);
+  assert.match(sample, /<link rel="canonical" href="https:\/\/www\.rtltasks\.com\/sample">/u);
   assert.match(sample, /<main id="sample"[^>]*aria-labelledby="sample-title">/u);
   assert.match(sample, /id="sample-checkout-form"/u);
   assert.match(sample, /id="checkout-attempt-id"/u);
+  assert.match(sample, /name="terms_version" value="1\.0\.0"/u);
+  assert.match(sample, new RegExp(`name="terms_sha256" value="${termsSha256}"`, 'u'));
+  assert.match(sample, /name="order_binding_version" value="1\.0\.0"/u);
+  assert.match(sample, new RegExp(`name="order_binding_sha256" value="${orderBindingSha256}"`, 'u'));
   assert.match(sample, /id="purchase-button"/u);
   assert.match(sample, /id="store-status" aria-live="polite"/u);
   assert.match(sample, /fieldset \{ border: 1px solid #777; border-radius: 14px;/u);
   assert.match(sample, /#purchase-button \{ width: 100%;[^}]*border-radius: 8px;/u);
   assert.match(sample, /#purchase-button:disabled \{[^}]*cursor: not-allowed;[^}]*opacity: 1;/u);
-  assert.match(sample, /href="\/sample-license"/u);
-  assert.match(sample, /href="\/refund-policy"/u);
-  assert.match(sample, /href="\/privacy"/u);
+  assert.match(sample, /href="\/sample-license\.html(?:#[a-z-]+)?"/u);
+  assert.match(sample, /href="\/refund-policy\.html"/u);
+  assert.match(sample, /href="\/privacy\.html"/u);
   assert.match(sample, /<script src="\/assets\/checkout\.js"><\/script>/u);
 });
 
-test('public sample terms do not name third-party licenses', async () => {
-  const terms = await readFile(new URL('../public/sample-license.html', import.meta.url), 'utf8');
+test('public terms expose both exact versioned documents for review and download', async () => {
+  const [termsPage, license, orderBinding] = await Promise.all([
+    readFile(new URL('../public/sample-license.html', import.meta.url), 'utf8'),
+    readFile(new URL('../public/legal/SAMPLE_LICENSE-v1.0.0.md', import.meta.url)),
+    readFile(new URL('../public/legal/TERMS_AND_ORDER_BINDING-v1.0.0.md', import.meta.url)),
+  ]);
 
-  assert.doesNotMatch(terms, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
+  assert.equal(createHash('sha256').update(license).digest('hex'), termsSha256);
+  assert.equal(createHash('sha256').update(orderBinding).digest('hex'), orderBindingSha256);
+  assert.match(termsPage, /Sample license and limitations/u);
+  assert.match(termsPage, /Terms, parties, and order binding/u);
+  assert.match(termsPage, new RegExp(termsSha256, 'u'));
+  assert.match(termsPage, new RegExp(orderBindingSha256, 'u'));
+  assert.match(termsPage, /href="\/legal\/SAMPLE_LICENSE-v1\.0\.0\.md"/u);
+  assert.match(termsPage, /href="\/legal\/TERMS_AND_ORDER_BINDING-v1\.0\.0\.md"/u);
+  assert.match(termsPage, /Open-source material/u);
+  assert.match(termsPage, /Contracting parties/u);
+  assert.match(termsPage, /Required assent evidence/u);
+});
+
+test('checkout binds one exact value for both documents into Stripe metadata', async () => {
+  const [sample, checkout] = await Promise.all([
+    readFile(new URL('../public/sample.html', import.meta.url), 'utf8'),
+    readFile(new URL('../worker/checkout.js', import.meta.url), 'utf8'),
+  ]);
+
+  for (const name of [
+    'terms_accepted',
+    'terms_version',
+    'terms_sha256',
+    'order_binding_version',
+    'order_binding_sha256',
+  ]) {
+    assert.match(checkout, new RegExp(`exactFormValue\\(form, '${name}'`, 'u'));
+  }
+  assert.match(checkout, /const values = form\.getAll\(name\);/u);
+  assert.match(checkout, /values\.length === 1 && values\[0\] === expected/u);
+  for (const field of [
+    'package_id',
+    'artifact_version',
+    'artifact_sha256',
+    'artifact_asset_path',
+    'archive_filename',
+    'archive_bytes',
+    'terms_version',
+    'terms_sha256',
+    'order_binding_version',
+    'order_binding_sha256',
+    'terms_accepted_at',
+    'terms_acceptance_method',
+  ]) {
+    assert.match(checkout, new RegExp(`${field}:`, 'u'));
+  }
+  assert.match(checkout, /\n\s+metadata,\n\s+payment_intent_data:/u);
+  assert.match(checkout, /payment_intent_data: \{[\s\S]*metadata,/u);
+  assert.match(checkout, /name_collection: \{/u);
+  assert.match(checkout, /individual: \{ enabled: true, optional: false \}/u);
+  assert.match(checkout, /business: \{ enabled: true, optional: true \}/u);
+  assert.match(sample, /I have reviewed and accept both/u);
+  assert.match(sample, /Sample License and Limitations[^<]*(?:version|v) 1\.0\.0/iu);
+  assert.match(sample, /Terms, Parties, and Order Binding[^<]*(?:version|v) 1\.0\.0/iu);
 });
 
 test('the landing and sample pages use Stripe marketing typography while supporting pages retain the Checkout stack', async () => {
@@ -86,11 +154,11 @@ test('the contact section uses simple accessible text links', async () => {
   assert.doesNotMatch(landing, /#533afd|#4032c8|#b9b9f9|#2e2b8c|rgba\(84, 82, 251/iu);
   assert.match(landing, /Countless more architectures available on request\./u);
   assert.equal((landing.match(/Contact us via:/gu) || []).length, 1);
-  assert.match(landing, /<a href="\/sample" class="purchase-sample-btn">Explore Eval sample tasks<\/a>/u);
-  assert.match(landing, /\.purchase-sample-btn \{[^}]*width: fit-content;[^}]*margin: 3rem 0 2\.5rem;[^}]*border-radius: 8px;/u);
+  assert.match(landing, /<a href="\/sample\.html" class="purchase-sample-btn">Evaluate sample tasks<\/a>/u);
+  assert.match(landing, /\.purchase-sample-btn \{[^}]*width: 100%;[^}]*margin: 3rem auto 2\.5rem;[^}]*border-radius: 8px;/u);
   assert.match(landing, /@media \(max-width: 640px\) \{[\s\S]*?\.purchase-sample-btn \{ width: 100%; max-width: none; \}/u);
   assert.ok(landing.indexOf('Contact us via:') > landing.lastIndexOf('</details>'));
-  assert.ok(landing.indexOf('Explore Eval sample tasks') < landing.indexOf('Contact us via:'));
+  assert.ok(landing.indexOf('Diagnostic Sample') < landing.indexOf('Contact us via:'));
   assert.doesNotMatch(landing, /id="sample-checkout-form"|id="purchase-button"|\/assets\/checkout\.js/u);
   assert.doesNotMatch(landing, /—/u);
 });
@@ -190,18 +258,30 @@ test('all landing content sections are closed, animated native disclosures', asy
   assert.ok(landing.indexOf('>ASIC</h4>') < landing.indexOf('>FPGA</h4>'));
   assert.doesNotMatch(landing, /id="waveform-title"|>Waveform &amp; Signal Processing<|>Oscilloscopes<|>ADC<|>DAC<|>DDS &amp; Waveform Generation<|>Simulation &amp; Waveform Tooling</u);
   assert.doesNotMatch(landing, />For training AI on chip design</u);
-  assert.match(landing, /<h3 class="section-title">Where is the data from\?<\/h3>[\s\S]*<p class="faq-answer">Our data is fully synthetic, novel, and proprietary\. Every RLVR task is validated with EDA tools through compilation, simulation, and synthesis checks before it is included\.<\/p>/u);
+  assert.match(landing, /<h3 class="section-title">Where is the data from\?<\/h3>[\s\S]*<p class="faq-answer">Our packages combine licensed third-party RTL with operator-authored task adaptations, synthetic transformations, verification assets, evaluation metadata, diagnostic evidence, and curation\. Applicable open-source rights and notices remain intact; proprietary claims apply only to operator-authored materials and the curated compilation\. Every RLVR task is validated with EDA tools through compilation, simulation, and synthesis checks before it is included\.<\/p>/u);
   assert.doesNotMatch(landing, /Is your data synthetic\?|Where is your data from\?/u);
   assert.match(landing, /<h3 class="section-title">What do your licenses cover\?<\/h3>[\s\S]*<p class="faq-answer">Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights\.<\/p>/u);
   assert.match(landing, /<h3 class="section-title">Who owns trained models and outputs\?<\/h3>[\s\S]*<p class="faq-answer">You retain ownership of the trained models and outputs you create using our data\.<\/p>/u);
-  assert.equal((landing.match(/Our data is fully synthetic, novel, and proprietary\. Every RLVR task is validated with EDA tools through compilation, simulation, and synthesis checks before it is included\./gu) || []).length, 1);
+  assert.equal((landing.match(/Our packages combine licensed third-party RTL with operator-authored task adaptations, synthetic transformations, verification assets, evaluation metadata, diagnostic evidence, and curation\. Applicable open-source rights and notices remain intact; proprietary claims apply only to operator-authored materials and the curated compilation\. Every RLVR task is validated with EDA tools through compilation, simulation, and synthesis checks before it is included\./gu) || []).length, 1);
+  assert.doesNotMatch(landing, /fully synthetic, novel, and proprietary/iu);
   assert.equal((landing.match(/Exclusive and non-exclusive licenses cover our compiled dataset packages, verification artifacts, manifests, and curation methodology, not third-party rights\./gu) || []).length, 1);
   assert.equal((landing.match(/You retain ownership of the trained models and outputs you create using our data\./gu) || []).length, 1);
   assert.ok(landing.indexOf('id="training-title"') < landing.indexOf('id="chip-type-title"'));
   assert.ok(landing.indexOf('id="chip-type-title"') < landing.indexOf('id="faq-title"'));
   assert.ok(landing.indexOf('Countless more architectures available on request.') > landing.indexOf('id="chip-type-title"'));
   assert.ok(landing.indexOf('Countless more architectures available on request.') < landing.indexOf('id="faq-title"'));
-  assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Explore Eval sample tasks'));
+  assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Evaluate sample tasks'));
+});
+
+test('the protected fulfillment page names the current Diagnostic Sample ZIP', async () => {
+  const success = await readFile(
+    new URL('../public/purchase-success.html', import.meta.url),
+    'utf8',
+  );
+  assert.match(success, /Diagnostic Sample/u);
+  assert.doesNotMatch(success, /Evaluation Sample/u);
+  assert.match(success, /artifact version 1\.0\.2/iu);
+  assert.match(success, new RegExp(archiveFilename.replaceAll('.', '\\.'), 'u'));
 });
 
 test('sample navigation and canceled checkout returns use the standalone page', async () => {
@@ -218,7 +298,7 @@ test('sample navigation and canceled checkout returns use the standalone page', 
   assert.doesNotMatch(checkout, /\?checkout=cancelled#sample/u);
   assert.match(headers, /^\/sample\n  Cache-Control: private, no-store, max-age=0$/mu);
   for (const page of [terms, refunds, error, privacy]) {
-    assert.match(page, /href="\/sample"/u);
+    assert.match(page, /href="\/sample\.html"/u);
     assert.doesNotMatch(page, /href="\/#sample"/u);
   }
   assert.match(refunds, /revisiting the sample purchase page/u);

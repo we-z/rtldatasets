@@ -93,8 +93,12 @@
           cache: 'no-store',
           credentials: 'same-origin',
         });
-        if (!response.ok) return;
         const data = await response.json();
+        if (data.error === 'terms_reacceptance_required') {
+          window.location.replace('/purchase-error?reason=terms_reacceptance_required');
+          return;
+        }
+        if (!response.ok) return;
         if (data.recovered === true && data.redirect === '/purchase-success') {
           forgetAttemptAt(attempts, data.matchedAttemptIndex);
           window.location.replace(data.redirect);
@@ -121,12 +125,17 @@
       return response.json();
     })
     .then((data) => {
-      if (data.available !== true) throw new Error('Checkout unavailable');
+      if (
+        data.available !== true ||
+        data.product !== 'SoC Design + Verification RLVR Diagnostic Sample: 5 Tasks' ||
+        data.artifactVersion !== '1.0.2' ||
+        data.archiveFilename !== 'soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip'
+      ) throw new Error('Checkout unavailable');
       button.disabled = false;
       button.textContent = 'Purchase the five-task sample';
       status.textContent = checkoutCancelled
         ? 'Checkout was canceled. No purchase was completed; you may try again.'
-        : 'Checkout is available. Delivery is automated after payment.';
+        : 'Checkout is available for artifact version 1.0.2 (ZIP). Delivery is automated after payment.';
     })
     .catch(() => {
       button.disabled = true;

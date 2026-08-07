@@ -1,7 +1,7 @@
 # Third-party notices
 
 The purchase price covers task design and hardening, curation, packaging,
-metadata, and evaluation evidence. It does not grant exclusive ownership of
+metadata, and diagnostic evidence. It does not grant exclusive ownership of
 third-party material or convert open-source components into proprietary
 software. The license file inside each task directory remains authoritative.
 

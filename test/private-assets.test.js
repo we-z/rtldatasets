@@ -5,7 +5,7 @@ import worker from '../worker/index.js';
 test('direct requests can never fall through to protected static assets', async () => {
   let assetFetches = 0;
   const response = await worker.fetch(
-    new Request('https://www.rtldatasets.com/__private/artifacts/example.tar.gz'),
+    new Request('https://www.rtltasks.com/__private/artifacts/example.zip'),
     {
       ASSETS: {
         async fetch() {

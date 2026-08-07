@@ -41,9 +41,9 @@ test('identifier validators accept only expected shapes', () => {
 });
 
 test('production cookies use __Host, Secure, HttpOnly, and Lax', () => {
-  const names = cookieNames('https://www.rtldatasets.com');
+  const names = cookieNames('https://www.rtltasks.com');
   const checkoutName = checkoutCookieName(
-    'https://www.rtldatasets.com',
+    'https://www.rtltasks.com',
     '123e4567-e89b-42d3-a456-426614174000',
   );
   assert.match(checkoutName, /^__Host-rtl_checkout_[a-f0-9]{32}$/u);
@@ -71,8 +71,8 @@ test('concurrent checkout attempts use distinct 24-hour state cookies', () => {
   const first = '123e4567-e89b-42d3-a456-426614174000';
   const second = '123e4567-e89b-42d3-b456-426614174001';
   assert.notEqual(
-    checkoutCookieName('https://www.rtldatasets.com', first),
-    checkoutCookieName('https://www.rtldatasets.com', second),
+    checkoutCookieName('https://www.rtltasks.com', first),
+    checkoutCookieName('https://www.rtltasks.com', second),
   );
   const payload = checkoutStatePayload(first, 1_000);
   assert.equal(payload.exp, 1_000 + (24 * 60 * 60));

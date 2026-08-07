@@ -59,13 +59,15 @@
           cache: 'no-store',
           credentials: 'same-origin',
         });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.complete === true && data.redirect === '/purchase-success') {
-            forgetAttemptAt(data.matchedAttemptIndex);
-            window.location.replace(data.redirect);
-            return;
-          }
+        const data = await response.json().catch(() => ({}));
+        if (response.ok && data.complete === true && data.redirect === '/purchase-success') {
+          forgetAttemptAt(data.matchedAttemptIndex);
+          window.location.replace(data.redirect);
+          return;
+        }
+        if (data.error === 'terms_reacceptance_required') {
+          window.location.replace('/purchase-error?reason=terms_reacceptance_required');
+          return;
         }
         if (response.status >= 400 && response.status < 500) {
           status.textContent = 'We could not verify this checkout return. Contact root@puul.ai for help.';

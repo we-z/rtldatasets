@@ -20,6 +20,12 @@ import os from 'node:os';
 import path from 'node:path';
 import { create as createTar, extract as extractTar } from 'tar';
 
+throw new Error(
+  'Legacy v1.0.0 tar builder disabled: it cannot produce the pinned v1.0.2 customer ZIP. ' +
+  'Build and verify the release in the SoC DV pilot workspace, then run ' +
+  '`npm run prepare:production-assets -- /absolute/path/to/soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip`.',
+);
+
 const PRODUCT_ID = 'soc-dv-rlvr-diagnostic-sample-5-task';
 const SKU = 'SOC-DV-RLVR-DIAG-5-V1';
 const VERSION = '1.0.0';
@@ -33,7 +39,7 @@ if (!process.argv[2]) {
   throw new Error('Usage: npm run package:sample -- /absolute/path/to/sample /absolute/output/directory');
 }
 const source = path.resolve(process.argv[2]);
-const outputDirectory = path.resolve(process.argv[3] || path.join(os.tmpdir(), 'rtldatasets-release'));
+const outputDirectory = path.resolve(process.argv[3] || path.join(os.tmpdir(), 'rtltasks-release'));
 const fixedDate = new Date(RELEASE_EPOCH * 1000);
 
 function sha256(buffer) {
@@ -146,7 +152,7 @@ async function createArchive(stagingParent, target) {
 }
 
 async function verifyExtractedArchive(archive, expectedManifestCount, expectedManifestSha) {
-  const extractionParent = await mkdtemp(path.join(os.tmpdir(), 'rtldatasets-verify-'));
+  const extractionParent = await mkdtemp(path.join(os.tmpdir(), 'rtltasks-verify-'));
   try {
     await extractTar({ cwd: extractionParent, file: archive, strict: true, preservePaths: false });
     const names = await readdir(extractionParent);
@@ -185,7 +191,7 @@ async function main() {
   const reservation = await open(finalArchive, 'wx');
   await reservation.close();
 
-  const stagingParent = await mkdtemp(path.join(os.tmpdir(), 'rtldatasets-package-'));
+  const stagingParent = await mkdtemp(path.join(os.tmpdir(), 'rtltasks-package-'));
   const stagingRoot = path.join(stagingParent, ROOT_NAME);
   try {
     await cp(sourceReal, stagingRoot, { recursive: true, errorOnExist: true, force: false });
@@ -195,7 +201,7 @@ async function main() {
     await copyFile(path.join(repoRoot, 'product', 'SAMPLE_LICENSE.md'), path.join(stagingRoot, 'SAMPLE_LICENSE.md'));
     await copyFile(path.join(repoRoot, 'product', 'DELIVERY_AND_REFUND.md'), path.join(stagingRoot, 'DELIVERY_AND_REFUND.md'));
     const release = {
-      schema_version: 'rtldatasets.release.v1',
+      schema_version: 'rtltasks.release.v1',
       product_id: PRODUCT_ID,
       sku: SKU,
       artifact_version: VERSION,
@@ -230,7 +236,7 @@ async function main() {
     const archiveSha256 = await sha256File(finalArchive);
     const objectKey = `artifacts/${PRODUCT_ID}/v${VERSION}/sha256/${archiveSha256}/${ARCHIVE_NAME}`;
     const metadata = {
-      schema_version: 'rtldatasets.artifact.v1',
+      schema_version: 'rtltasks.artifact.v1',
       product_id: PRODUCT_ID,
       sku: SKU,
       artifact_version: VERSION,

@@ -5,7 +5,7 @@
   "compatibility_date": "2026-08-01",
   "workers_dev": true,
   "assets": {
-    "directory": "./.worker-assets",
+    "directory": "./public",
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
@@ -29,13 +29,10 @@
     }
   ],
   "vars": {
-    "STORE_LIVE": "true",
+    "STORE_LIVE": "false",
     "SITE_URL": "https://rtldatasets-com-sandbox.yousefsalem00.workers.dev",
     "STRIPE_MODE": "test",
-    "STRIPE_AUTOMATIC_TAX": "false",
-    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz",
-    "SAMPLE_ARCHIVE_SHA256": "ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc",
-    "SAMPLE_ARCHIVE_BYTES": "69768"
+    "STRIPE_AUTOMATIC_TAX": "false"
   },
   "observability": {
     "enabled": true,

@@ -1,5 +1,6 @@
 import { createCheckout } from './checkout.js';
-import { safeErrorCode } from './http.js';
+import { getSiteOrigin } from './config.js';
+import { redirect, safeErrorCode } from './http.js';
 import {
   apiNotFound,
   checkoutSuccess,
@@ -13,8 +14,15 @@ import {
 
 export default {
   async fetch(request, env, ctx) {
-    const path = new URL(request.url).pathname;
+    const requestUrl = new URL(request.url);
+    const path = requestUrl.pathname;
     try {
+      const siteOrigin = getSiteOrigin(env);
+      if (requestUrl.origin !== siteOrigin) {
+        const canonicalUrl = new URL(`${requestUrl.pathname}${requestUrl.search}`, siteOrigin);
+        return redirect(canonicalUrl.toString(), 308);
+      }
+
       switch (path) {
         case '/api/store-status':
           return await storeStatus(request, env);

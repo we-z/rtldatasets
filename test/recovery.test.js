@@ -5,9 +5,8 @@ import { recoverPurchase } from '../worker/handlers.js';
 import { PRODUCT } from '../worker/product.js';
 import { verifyToken } from '../worker/tokens.js';
 
-const siteOrigin = 'https://www.rtldatasets.com';
+const siteOrigin = 'https://www.rtltasks.com';
 const signingSecret = 'a-recovery-test-signing-secret-more-than-32-bytes';
-const sha = 'a'.repeat(64);
 const attemptId = '123e4567-e89b-42d3-a456-426614174000';
 const sessionId = 'cs_test_recovery123456789';
 
@@ -19,9 +18,9 @@ function recoveryEnvironment() {
     STRIPE_WEBHOOK_SECRET: 'whsec_recovery',
     STRIPE_SAMPLE_PRICE_ID: 'price_recovery',
     ENTITLEMENT_SIGNING_SECRET: signingSecret,
-    SAMPLE_ARCHIVE_SHA256: sha,
-    SAMPLE_ASSET_PATH: `/__private/artifacts/product/v1/sha256/${sha}/${PRODUCT.archiveFilename}`,
-    SAMPLE_ARCHIVE_BYTES: '69675',
+    SAMPLE_ARCHIVE_SHA256: PRODUCT.archiveSha256,
+    SAMPLE_ASSET_PATH: PRODUCT.artifactAssetPath,
+    SAMPLE_ARCHIVE_BYTES: String(PRODUCT.archiveBytes),
     CHECKOUT_RATE_LIMITER: { limit: async () => ({ success: true }) },
     ORDERS: {},
     ASSETS: {},

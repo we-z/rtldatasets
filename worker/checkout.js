@@ -13,6 +13,11 @@ import {
   validAttemptId,
 } from './tokens.js';
 
+function exactFormValue(form, name, expected) {
+  const values = form.getAll(name);
+  return values.length === 1 && values[0] === expected;
+}
+
 export async function createCheckout(request, env) {
   assertMethod(request, 'POST');
   if (env.STORE_LIVE !== 'true') throw new HttpError(503, 'store_unavailable');
@@ -22,7 +27,13 @@ export async function createCheckout(request, env) {
   const form = await readUrlEncodedForm(request);
   const attemptId = form.get('attempt_id');
   if (!validAttemptId(attemptId)) throw new HttpError(400, 'invalid_checkout_attempt');
-  if (form.get('terms_accepted') !== 'yes' || form.get('terms_version') !== PRODUCT.termsVersion) {
+  if (
+    !exactFormValue(form, 'terms_accepted', 'yes') ||
+    !exactFormValue(form, 'terms_version', PRODUCT.termsVersion) ||
+    !exactFormValue(form, 'terms_sha256', PRODUCT.termsSha256) ||
+    !exactFormValue(form, 'order_binding_version', PRODUCT.orderBindingVersion) ||
+    !exactFormValue(form, 'order_binding_sha256', PRODUCT.orderBindingSha256)
+  ) {
     throw new HttpError(400, 'terms_required');
   }
 
@@ -37,16 +48,28 @@ export async function createCheckout(request, env) {
   const metadata = {
     product_id: PRODUCT.productId,
     sku: PRODUCT.sku,
+    package_id: PRODUCT.packageId,
     artifact_version: PRODUCT.artifactVersion,
     artifact_sha256: config.artifactSha256,
     artifact_asset_path: config.artifactAssetPath,
+    archive_filename: PRODUCT.archiveFilename,
+    archive_bytes: String(config.archiveBytes),
     terms_version: PRODUCT.termsVersion,
+    terms_sha256: PRODUCT.termsSha256,
+    order_binding_version: PRODUCT.orderBindingVersion,
+    order_binding_sha256: PRODUCT.orderBindingSha256,
+    terms_accepted_at: new Date().toISOString(),
+    terms_acceptance_method: PRODUCT.acceptanceMethod,
   };
   const session = await stripe.checkout.sessions.create({
     mode: 'payment',
     payment_method_types: ['card'],
     customer_creation: 'always',
     billing_address_collection: 'required',
+    name_collection: {
+      individual: { enabled: true, optional: false },
+      business: { enabled: true, optional: true },
+    },
     client_reference_id: attemptId,
     line_items: [{ price: config.stripePriceId, quantity: 1 }],
     metadata,

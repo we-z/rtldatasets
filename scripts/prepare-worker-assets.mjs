@@ -5,7 +5,7 @@ import path from 'node:path';
 const repoRoot = path.resolve(import.meta.dirname, '..');
 const archive = path.resolve(process.argv[2] || '');
 if (!process.argv[2]) {
-  throw new Error('Usage: npm run prepare:production-assets -- /absolute/path/to/archive.tar.gz');
+  throw new Error('Usage: npm run prepare:production-assets -- /absolute/path/to/customer-package.zip');
 }
 
 const archiveInfo = await lstat(archive);

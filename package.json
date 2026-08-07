@@ -1,5 +1,5 @@
 {
-  "name": "rtldatasets.com",
+  "name": "rtltasks.com",
   "version": "1.0.0",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "npm test && npm run verify:worker-assets && wrangler deploy",
-    "deploy:sandbox": "npm test && npm run verify:worker-assets && wrangler deploy --config wrangler.sandbox.jsonc",
+    "deploy:sandbox": "npm test && wrangler deploy --config wrangler.sandbox.jsonc",
     "deploy:staging": "wrangler deploy --config wrangler.staging.jsonc",
     "cf:types": "wrangler types",
     "db:migrate:local": "wrangler d1 migrations apply rtldatasets-orders --local",

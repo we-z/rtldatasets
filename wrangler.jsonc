@@ -8,6 +8,18 @@
     {
       "pattern": "www.rtldatasets.com",
       "custom_domain": true
+    },
+    {
+      "pattern": "www.rtltasks.com",
+      "custom_domain": true
+    },
+    {
+      "pattern": "puul.ai/*",
+      "zone_name": "puul.ai"
+    },
+    {
+      "pattern": "www.puul.ai/*",
+      "zone_name": "puul.ai"
     }
   ],
   "assets": {
@@ -15,7 +27,7 @@
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
-    "run_worker_first": ["/api/*", "/__private/*", "/purchase-success", "/purchase-success/*"]
+    "run_worker_first": true
   },
   "d1_databases": [
     {
@@ -36,12 +48,12 @@
   ],
   "vars": {
     "STORE_LIVE": "true",
-    "SITE_URL": "https://www.rtldatasets.com",
+    "SITE_URL": "https://www.rtltasks.com",
     "STRIPE_MODE": "live",
     "STRIPE_AUTOMATIC_TAX": "false",
-    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz",
-    "SAMPLE_ARCHIVE_SHA256": "ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc",
-    "SAMPLE_ARCHIVE_BYTES": "69768"
+    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.2/sha256/24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904/soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip",
+    "SAMPLE_ARCHIVE_SHA256": "24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904",
+    "SAMPLE_ARCHIVE_BYTES": "164691"
   },
   "observability": {
     "enabled": true,

@@ -4,18 +4,17 @@ import { checkoutSuccess } from '../worker/handlers.js';
 import { PRODUCT } from '../worker/product.js';
 
 test('checkout completion is rate-limited before any Stripe lookup', async () => {
-  const sha = 'e'.repeat(64);
   let rateKey;
   const env = {
-    SITE_URL: 'https://www.rtldatasets.com',
+    SITE_URL: 'https://www.rtltasks.com',
     STRIPE_SECRET_KEY: 'sk_test_example',
     STRIPE_MODE: 'test',
     STRIPE_WEBHOOK_SECRET: 'whsec_example',
     STRIPE_SAMPLE_PRICE_ID: 'price_example',
     ENTITLEMENT_SIGNING_SECRET: 'a-signing-secret-that-is-more-than-32-bytes',
-    SAMPLE_ARCHIVE_SHA256: sha,
-    SAMPLE_ASSET_PATH: `/__private/artifacts/sha256/${sha}/${PRODUCT.archiveFilename}`,
-    SAMPLE_ARCHIVE_BYTES: '69675',
+    SAMPLE_ARCHIVE_SHA256: PRODUCT.archiveSha256,
+    SAMPLE_ASSET_PATH: PRODUCT.artifactAssetPath,
+    SAMPLE_ARCHIVE_BYTES: String(PRODUCT.archiveBytes),
     CHECKOUT_RATE_LIMITER: {
       async limit({ key }) {
         rateKey = key;
@@ -23,10 +22,10 @@ test('checkout completion is rate-limited before any Stripe lookup', async () =>
       },
     },
   };
-  const request = new Request('https://www.rtldatasets.com/api/checkout-success', {
+  const request = new Request('https://www.rtltasks.com/api/checkout-success', {
     method: 'POST',
     headers: {
-      Origin: 'https://www.rtldatasets.com',
+      Origin: 'https://www.rtltasks.com',
       'CF-Connecting-IP': '192.0.2.10',
       'Content-Type': 'application/x-www-form-urlencoded',
     },

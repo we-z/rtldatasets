@@ -10,9 +10,9 @@ export function createStripe(config) {
     maxNetworkRetries: 2,
     telemetry: false,
     appInfo: {
-      name: 'rtldatasets.com',
+      name: 'rtltasks.com',
       version: '1.0.0',
-      url: 'https://www.rtldatasets.com',
+      url: 'https://www.rtltasks.com',
     },
   });
 }

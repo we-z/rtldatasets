@@ -5,8 +5,8 @@ import { loadVerifiedArtifact } from '../worker/artifact.js';
 
 const content = new TextEncoder().encode('verified paid artifact');
 const config = {
-  siteOrigin: 'https://www.rtldatasets.com',
-  artifactAssetPath: '/__private/artifacts/example.tar.gz',
+  siteOrigin: 'https://www.rtltasks.com',
+  artifactAssetPath: '/__private/artifacts/example.zip',
   archiveBytes: content.byteLength,
   artifactSha256: createHash('sha256').update(content).digest('hex'),
 };
