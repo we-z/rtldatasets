@@ -14,6 +14,10 @@
       "custom_domain": true
     },
     {
+      "pattern": "rtltasks.com",
+      "custom_domain": true
+    },
+    {
       "pattern": "puul.ai/*",
       "zone_name": "puul.ai"
     },
@@ -51,9 +55,9 @@
     "SITE_URL": "https://www.rtltasks.com",
     "STRIPE_MODE": "live",
     "STRIPE_AUTOMATIC_TAX": "false",
-    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.2/sha256/24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904/soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip",
-    "SAMPLE_ARCHIVE_SHA256": "24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904",
-    "SAMPLE_ARCHIVE_BYTES": "164691"
+    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v2.0.0/sha256/99ea9ecffc4f9e9d5d456b14510d6976c36b6e8be31ce246a8ee025c21d2b0bc/soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip",
+    "SAMPLE_ARCHIVE_SHA256": "99ea9ecffc4f9e9d5d456b14510d6976c36b6e8be31ce246a8ee025c21d2b0bc",
+    "SAMPLE_ARCHIVE_BYTES": "154827"
   },
   "observability": {
     "enabled": true,

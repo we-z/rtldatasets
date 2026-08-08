@@ -5,20 +5,20 @@ import { artifactDownloadHeaders } from '../worker/handlers.js';
 import { LEGACY_CHECKOUT_ARTIFACTS, PRODUCT } from '../worker/product.js';
 
 const RELEASE = Object.freeze({
-  artifactVersion: '1.0.2',
-  packageId: 'soc-dv-gpt-5.3-codex-spark-customer-package-v1',
-  archiveFilename: 'soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip',
+  artifactVersion: '2.0.0',
+  packageId: 'soc-dv-gpt-5.6-luna-customer-package-v1',
+  archiveFilename: 'soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip',
   archiveContentType: 'application/zip',
-  archiveSha256: '24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904',
-  archiveBytes: 164_691,
-  artifactAssetPath: '/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.2/sha256/24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904/soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip',
-  termsVersion: '1.0.0',
-  termsSha256: '9641c0bf29ce31557b7f6bdc221b429c86456c48c9019355c3e00c5bdd6e0530',
-  orderBindingVersion: '1.0.0',
-  orderBindingSha256: 'c58f427f07c8199ba756b82ff0be822df80016ee2dfe3342b11c826a19fc6f0f',
+  archiveSha256: '99ea9ecffc4f9e9d5d456b14510d6976c36b6e8be31ce246a8ee025c21d2b0bc',
+  archiveBytes: 154_827,
+  artifactAssetPath: '/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v2.0.0/sha256/99ea9ecffc4f9e9d5d456b14510d6976c36b6e8be31ce246a8ee025c21d2b0bc/soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip',
+  termsVersion: '1.1.0',
+  termsSha256: 'ed1d379b4c9d94aa5aa1ad40a7be813bb30be3567c5404170a455eabcd95f795',
+  orderBindingVersion: '1.0.1',
+  orderBindingSha256: '868f52938aaca2f4a97173479bae1cde576e4aca694f4966e74abef3458698b0',
 });
 
-test('product constants pin the exact v1.0.2 Diagnostic Sample release', () => {
+test('product constants pin the exact v2.0.0 Diagnostic Sample release', () => {
   assert.equal(PRODUCT.name, 'SoC Design + Verification RLVR Diagnostic Sample: 5 Tasks');
   for (const [key, value] of Object.entries(RELEASE)) {
     assert.equal(PRODUCT[key], value, `${key} must match the customer release`);
@@ -40,6 +40,7 @@ test('production configuration alone pins and uploads the exact immutable releas
   assert.deepEqual(config.routes, [
     { pattern: 'www.rtldatasets.com', custom_domain: true },
     { pattern: 'www.rtltasks.com', custom_domain: true },
+    { pattern: 'rtltasks.com', custom_domain: true },
     { pattern: 'puul.ai/*', zone_name: 'puul.ai' },
     { pattern: 'www.puul.ai/*', zone_name: 'puul.ai' },
   ]);
@@ -109,12 +110,12 @@ test('checkout client enables purchase only for the current release status', asy
     new URL('../public/assets/checkout.js', import.meta.url),
     'utf8',
   );
-  assert.match(checkout, /data\.artifactVersion !== '1\.0\.2'/u);
+  assert.match(checkout, /data\.artifactVersion !== '2\.0\.0'/u);
   assert.match(
     checkout,
-    /data\.archiveFilename !== 'soc-dv-gpt-5\.3-codex-spark-customer-package-v1\.0\.2\.zip'/u,
+    /data\.archiveFilename !== 'soc-dv-gpt-5\.6-luna-customer-package-v2\.0\.0\.zip'/u,
   );
-  assert.match(checkout, /artifact version 1\.0\.2 \(ZIP\)/u);
+  assert.match(checkout, /artifact version 2\.0\.0 \(ZIP\)/u);
 });
 
 test('browser fulfillment routes legacy orders to explicit terms reacceptance', async () => {
@@ -137,11 +138,19 @@ test('browser fulfillment routes legacy orders to explicit terms reacceptance', 
   assert.match(errorClient, /explicit written reacceptance/u);
 });
 
-test('legacy compatibility is restricted to the single historical paid binding', () => {
-  assert.deepEqual(LEGACY_CHECKOUT_ARTIFACTS, [{
-    artifactVersion: '1.0.0',
-    archiveSha256: 'ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc',
-    artifactAssetPath: '/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz',
-    legacy: true,
-  }]);
+test('legacy compatibility is restricted to the two historical paid bindings', () => {
+  assert.deepEqual(LEGACY_CHECKOUT_ARTIFACTS, [
+    {
+      artifactVersion: '1.0.0',
+      archiveSha256: 'ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc',
+      artifactAssetPath: '/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.0/sha256/ddecf9fc5e0057d4a884b2537ea7e2c973235714fa731e9b68e5dbc8432b1dfc/soc-dv-rlvr-diagnostic-sample-5-task-v1.0.0.tar.gz',
+      legacy: true,
+    },
+    {
+      artifactVersion: '1.0.2',
+      archiveSha256: '24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904',
+      artifactAssetPath: '/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v1.0.2/sha256/24eceb7389d767099370afadbdebe8bb74a6744241f4e3957635d53ce6dbb904/soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip',
+      legacy: true,
+    },
+  ]);
 });

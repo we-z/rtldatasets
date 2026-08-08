@@ -128,14 +128,14 @@
       if (
         data.available !== true ||
         data.product !== 'SoC Design + Verification RLVR Diagnostic Sample: 5 Tasks' ||
-        data.artifactVersion !== '1.0.2' ||
-        data.archiveFilename !== 'soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip'
+        data.artifactVersion !== '2.0.0' ||
+        data.archiveFilename !== 'soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip'
       ) throw new Error('Checkout unavailable');
       button.disabled = false;
       button.textContent = 'Purchase the five-task sample';
       status.textContent = checkoutCancelled
         ? 'Checkout was canceled. No purchase was completed; you may try again.'
-        : 'Checkout is available for artifact version 1.0.2 (ZIP). Delivery is automated after payment.';
+        : 'Checkout is available for artifact version 2.0.0 (ZIP). Delivery is automated after payment.';
     })
     .catch(() => {
       button.disabled = true;

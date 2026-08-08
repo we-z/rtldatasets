@@ -55,7 +55,7 @@ test('artifact hash, byte size, and immutable path are exact release pins', () =
     (env) => { env.SAMPLE_ARCHIVE_SHA256 = 'b'.repeat(64); },
     (env) => { env.SAMPLE_ARCHIVE_BYTES = String(PRODUCT.archiveBytes + 1); },
     (env) => {
-      env.SAMPLE_ASSET_PATH = PRODUCT.artifactAssetPath.replace('/v1.0.2/', '/v1.0.1/');
+      env.SAMPLE_ASSET_PATH = PRODUCT.artifactAssetPath.replace(`/v${PRODUCT.artifactVersion}/`, '/v2.0.1/');
     },
     (env) => {
       env.SAMPLE_ASSET_PATH = PRODUCT.artifactAssetPath.replace(PRODUCT.archiveFilename, 'other.zip');

@@ -3,16 +3,16 @@ import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
-const termsSha256 = '9641c0bf29ce31557b7f6bdc221b429c86456c48c9019355c3e00c5bdd6e0530';
-const orderBindingSha256 = 'c58f427f07c8199ba756b82ff0be822df80016ee2dfe3342b11c826a19fc6f0f';
-const archiveFilename = 'soc-dv-gpt-5.3-codex-spark-customer-package-v1.0.2.zip';
+const termsSha256 = 'ed1d379b4c9d94aa5aa1ad40a7be813bb30be3567c5404170a455eabcd95f795';
+const orderBindingSha256 = '868f52938aaca2f4a97173479bae1cde576e4aca694f4966e74abef3458698b0';
+const archiveFilename = 'soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip';
 
 test('the standalone sample page preserves the complete purchase flow', async () => {
   const sample = await readFile(new URL('../public/sample.html', import.meta.url), 'utf8');
 
   assert.match(sample, /RLVR Diagnostic Sample: 5 Tasks/u);
   assert.doesNotMatch(sample, /RLVR Evaluation Sample: 5 Tasks/u);
-  assert.match(sample, /Artifact version 1\.0\.2/u);
+  assert.match(sample, /Artifact version 2\.0\.0/u);
   assert.match(sample, new RegExp(archiveFilename.replaceAll('.', '\\.'), 'u'));
   assert.doesNotMatch(sample, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
   assert.doesNotMatch(sample, /—/u);
@@ -21,9 +21,9 @@ test('the standalone sample page preserves the complete purchase flow', async ()
   assert.match(sample, /<main id="sample"[^>]*aria-labelledby="sample-title">/u);
   assert.match(sample, /id="sample-checkout-form"/u);
   assert.match(sample, /id="checkout-attempt-id"/u);
-  assert.match(sample, /name="terms_version" value="1\.0\.0"/u);
+  assert.match(sample, /name="terms_version" value="1\.1\.0"/u);
   assert.match(sample, new RegExp(`name="terms_sha256" value="${termsSha256}"`, 'u'));
-  assert.match(sample, /name="order_binding_version" value="1\.0\.0"/u);
+  assert.match(sample, /name="order_binding_version" value="1\.0\.1"/u);
   assert.match(sample, new RegExp(`name="order_binding_sha256" value="${orderBindingSha256}"`, 'u'));
   assert.match(sample, /id="purchase-button"/u);
   assert.match(sample, /id="store-status" aria-live="polite"/u);
@@ -39,8 +39,8 @@ test('the standalone sample page preserves the complete purchase flow', async ()
 test('public terms expose both exact versioned documents for review and download', async () => {
   const [termsPage, license, orderBinding] = await Promise.all([
     readFile(new URL('../public/sample-license.html', import.meta.url), 'utf8'),
-    readFile(new URL('../public/legal/SAMPLE_LICENSE-v1.0.0.md', import.meta.url)),
-    readFile(new URL('../public/legal/TERMS_AND_ORDER_BINDING-v1.0.0.md', import.meta.url)),
+    readFile(new URL('../public/legal/SAMPLE_LICENSE-v1.1.0.md', import.meta.url)),
+    readFile(new URL('../public/legal/TERMS_AND_ORDER_BINDING-v1.0.1.md', import.meta.url)),
   ]);
 
   assert.equal(createHash('sha256').update(license).digest('hex'), termsSha256);
@@ -49,9 +49,9 @@ test('public terms expose both exact versioned documents for review and download
   assert.match(termsPage, /Terms, parties, and order binding/u);
   assert.match(termsPage, new RegExp(termsSha256, 'u'));
   assert.match(termsPage, new RegExp(orderBindingSha256, 'u'));
-  assert.match(termsPage, /href="\/legal\/SAMPLE_LICENSE-v1\.0\.0\.md"/u);
-  assert.match(termsPage, /href="\/legal\/TERMS_AND_ORDER_BINDING-v1\.0\.0\.md"/u);
-  assert.match(termsPage, /Open-source material/u);
+  assert.match(termsPage, /href="\/legal\/SAMPLE_LICENSE-v1\.1\.0\.md"/u);
+  assert.match(termsPage, /href="\/legal\/TERMS_AND_ORDER_BINDING-v1\.0\.1\.md"/u);
+  assert.match(termsPage, /Originality/u);
   assert.match(termsPage, /Contracting parties/u);
   assert.match(termsPage, /Required assent evidence/u);
 });
@@ -95,8 +95,8 @@ test('checkout binds one exact value for both documents into Stripe metadata', a
   assert.match(checkout, /individual: \{ enabled: true, optional: false \}/u);
   assert.match(checkout, /business: \{ enabled: true, optional: true \}/u);
   assert.match(sample, /I have reviewed and accept both/u);
-  assert.match(sample, /Sample License and Limitations[^<]*(?:version|v) 1\.0\.0/iu);
-  assert.match(sample, /Terms, Parties, and Order Binding[^<]*(?:version|v) 1\.0\.0/iu);
+  assert.match(sample, /Sample License and Limitations[^<]*(?:version|v) 1\.1\.0/iu);
+  assert.match(sample, /Terms, Parties, and Order Binding[^<]*(?:version|v) 1\.0\.1/iu);
 });
 
 test('the landing and sample pages use Stripe marketing typography while supporting pages retain the Checkout stack', async () => {
@@ -129,6 +129,23 @@ test('the landing page highlights the three strongest scale claims', async () =>
   assert.doesNotMatch(landing, /100,000,000,000\+|<strong>[^<]*<\/strong> tokens/u);
   assert.ok(landing.indexOf('100,000+</strong> RLVR tasks') < landing.indexOf('50,000+</strong> code bases'));
   assert.ok(landing.indexOf('50,000+</strong> code bases') < landing.indexOf('10,000,000+</strong> raw code files'));
+});
+
+test('the landing page publishes social sharing and favicon artwork', async () => {
+  const [landing, openGraphImage, favicon] = await Promise.all([
+    readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
+    readFile(new URL('../public/assets/rtl-tasks-og.png', import.meta.url)),
+    readFile(new URL('../public/favicon-32x32.png', import.meta.url)),
+  ]);
+
+  assert.match(landing, /<meta property="og:image" content="https:\/\/www\.rtltasks\.com\/assets\/rtl-tasks-og\.png">/u);
+  assert.match(landing, /<meta name="twitter:card" content="summary_large_image">/u);
+  assert.match(landing, /<link rel="icon" href="\/favicon\.ico" sizes="any">/u);
+  assert.match(landing, /<link rel="apple-touch-icon" sizes="180x180" href="\/apple-touch-icon\.png">/u);
+  assert.equal(openGraphImage.readUInt32BE(16), 1200);
+  assert.equal(openGraphImage.readUInt32BE(20), 630);
+  assert.equal(favicon.readUInt32BE(16), 32);
+  assert.equal(favicon.readUInt32BE(20), 32);
 });
 
 test('the contact section uses simple accessible text links', async () => {
@@ -280,7 +297,7 @@ test('the protected fulfillment page names the current Diagnostic Sample ZIP', a
   );
   assert.match(success, /Diagnostic Sample/u);
   assert.doesNotMatch(success, /Evaluation Sample/u);
-  assert.match(success, /artifact version 1\.0\.2/iu);
+  assert.match(success, /artifact version 2\.0\.0/iu);
   assert.match(success, new RegExp(archiveFilename.replaceAll('.', '\\.'), 'u'));
 });
 
