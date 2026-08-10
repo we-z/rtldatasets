@@ -1,4 +1,5 @@
 import { downloadSample } from '../lib/handlers.js';
 import { createRouteHandler } from '../lib/route.js';
+import { toNodeHandler } from '../lib/node-handler.js';
 
-export default createRouteHandler(downloadSample);
+export default toNodeHandler(createRouteHandler(downloadSample));

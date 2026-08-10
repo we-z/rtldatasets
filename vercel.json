@@ -2,8 +2,9 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "outputDirectory": "public",
   "trailingSlash": false,
+  "cleanUrls": true,
   "functions": {
-    "api/purchase-success-page.js": { "includeFiles": "public/purchase-success.html" }
+    "api/purchase-success-page.js": { "includeFiles": "templates/purchase-success.html" }
   },
   "rewrites": [
     { "source": "/purchase-success", "destination": "/api/purchase-success-page" },
