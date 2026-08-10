@@ -34,3 +34,14 @@ npx vercel --prod              # Vercel
 npm run deploy:cloudflare      # Cloudflare (the current live production host)
 npm run deploy:staging         # Cloudflare staging preview
 ```
+
+## Known follow-up
+
+`https://www.rtltasks.com/purchase-success` still 303-redirects to
+`/purchase-error?reason=method_not_allowed`. This is **not** coming from
+`worker/index.js` (confirmed via `wrangler tail` — the request never
+reaches the Worker at all) — it's a leftover Cloudflare Redirect Rule or
+Page Rule configured directly on the zone from before this cleanup, and
+needs to be removed in the Cloudflare Dashboard under Rules → Redirect
+Rules / Page Rules, since it isn't part of anything `wrangler deploy` can
+touch.
