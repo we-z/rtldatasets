@@ -16,8 +16,6 @@ test('checkout completion is rate-limited before any Stripe lookup', async () =>
     SAMPLE_ARCHIVE_SHA256: PRODUCT.archiveSha256,
     SAMPLE_ASSET_PATH: PRODUCT.artifactAssetPath,
     SAMPLE_ARCHIVE_BYTES: String(PRODUCT.archiveBytes),
-    BLOB_READ_WRITE_TOKEN: 'vercel_blob_rw_test_token',
-    DATABASE_URL: 'postgres://user:pass@localhost:5432/db',
     UPSTASH_REDIS_REST_URL: 'https://example.upstash.io',
     UPSTASH_REDIS_REST_TOKEN: 'token',
     __rateLimitOverride: async (prefix, key) => {

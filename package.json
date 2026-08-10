@@ -16,9 +16,6 @@
     "db:migrate:local": "wrangler d1 migrations apply rtldatasets-orders --local",
     "db:migrate:remote": "wrangler d1 migrations apply rtldatasets-orders --remote",
     "db:migrate:sandbox": "wrangler d1 migrations apply rtldatasets-orders-sandbox --remote --config wrangler.sandbox.jsonc",
-    "db:migrate:pg": "node scripts/db-migrate.mjs",
-    "migrate:orders:d1-to-pg": "node scripts/migrate-orders-d1-to-pg.mjs",
-    "upload:artifact": "node scripts/upload-vercel-artifact.mjs",
     "package:sample": "node scripts/package-sample.mjs",
     "prepare:production-assets": "node scripts/prepare-worker-assets.mjs",
     "verify:worker-assets": "node scripts/verify-worker-assets.mjs",
@@ -27,8 +24,6 @@
   "dependencies": {
     "@upstash/ratelimit": "2.0.8",
     "@upstash/redis": "1.38.2",
-    "@vercel/blob": "2.7.0",
-    "pg": "8.23.0",
     "stripe": "22.4.0"
   },
   "devDependencies": {
