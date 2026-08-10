@@ -1,7 +1,0 @@
-# Must never be served as a static file — it would be reachable at the
-# clean URL /purchase-success ahead of the vercel.json rewrite to the gated
-# api/purchase-success-page.js function, bypassing the entitlement check.
-# The function reads its own copy from templates/purchase-success.html
-# instead (still kept here for the still-live Cloudflare Worker, which
-# serves it as a Workers Static Asset the same way it always has).
-public/purchase-success.html

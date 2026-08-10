@@ -74,19 +74,14 @@
         .collapsible-section > ul { margin: 0.5rem 0 1.25rem; padding-left: 2.15rem; }
         .faq-answer { margin: 0.5rem 0 1.25rem; padding-left: 2.15rem; font-size: 1.15rem; line-height: 1.5; }
         .landing-contact { margin: 0 0 0.75rem; }
-        .purchase-sample-btn { display: flex; min-height: 48px; width: 100%; max-width: none; align-items: center; justify-content: center; margin: 3rem auto 2.5rem; padding: 0 1.25rem; border: 1px solid #000; border-radius: 8px; color: #fff; background: #000; font-size: 1.05rem; font-weight: 500; line-height: 1; letter-spacing: -0.01em; text-align: center; text-decoration: none; transition: background-color 160ms ease, border-color 160ms ease; }
-        .purchase-sample-btn:hover { border-color: #242424; background: #242424; }
-        .purchase-sample-btn:active { border-color: #3a3a3a; background: #3a3a3a; }
-        .purchase-sample-btn:focus-visible { outline: 3px solid #111; outline-offset: 3px; }
         @media (max-width: 640px) {
             .group-content { padding-left: 0.75rem; }
             .collapsible-subgroup > .subgroup-content { padding-left: 0.75rem; }
             .collapsible-section > ul { padding-left: 1.75rem; }
             .faq-answer { padding-left: 1.75rem; }
-            .purchase-sample-btn { width: 100%; max-width: none; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .section-chevron, .purchase-sample-btn { transition: none; }
+            .section-chevron { transition: none; }
             .collapsible-group.is-animating, .collapsible-section.is-animating { transition: none; }
             .collapsible-group.is-opening > .group-content, .collapsible-section.is-opening > ul, .collapsible-section.is-opening > .faq-answer, .collapsible-group.is-closing > .group-content, .collapsible-section.is-closing > ul, .collapsible-section.is-closing > .faq-answer { animation: none; }
         }

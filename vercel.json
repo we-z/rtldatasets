@@ -3,13 +3,6 @@
   "outputDirectory": "public",
   "trailingSlash": false,
   "cleanUrls": true,
-  "functions": {
-    "api/purchase-success-page.js": { "includeFiles": "templates/purchase-success.html" }
-  },
-  "rewrites": [
-    { "source": "/purchase-success", "destination": "/api/purchase-success-page" },
-    { "source": "/purchase-success/", "destination": "/api/purchase-success-page" }
-  ],
   "redirects": [
     {
       "source": "/:path*",
@@ -22,41 +15,12 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'none'; connect-src 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; base-uri 'none'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'" },
         { "key": "Permissions-Policy", "value": "camera=(), geolocation=(), microphone=(), payment=()" },
         { "key": "Referrer-Policy", "value": "same-origin" },
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains" },
         { "key": "X-Content-Type-Options", "value": "nosniff" },
         { "key": "X-Frame-Options", "value": "DENY" }
-      ]
-    },
-    {
-      "source": "/assets/checkout.js",
-      "headers": [{ "key": "Cache-Control", "value": "private, no-store, max-age=0" }]
-    },
-    {
-      "source": "/sample",
-      "headers": [{ "key": "Cache-Control", "value": "private, no-store, max-age=0" }]
-    },
-    {
-      "source": "/purchase-success",
-      "headers": [
-        { "key": "Cache-Control", "value": "private, no-store, max-age=0" },
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
-      ]
-    },
-    {
-      "source": "/purchase-complete",
-      "headers": [
-        { "key": "Cache-Control", "value": "private, no-store, max-age=0" },
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
-      ]
-    },
-    {
-      "source": "/purchase-error",
-      "headers": [
-        { "key": "Cache-Control", "value": "private, no-store, max-age=0" },
-        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
       ]
     }
   ]

@@ -1,123 +1,6 @@
 import assert from 'node:assert/strict';
-import { createHash } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import test from 'node:test';
-
-const termsSha256 = 'ed1d379b4c9d94aa5aa1ad40a7be813bb30be3567c5404170a455eabcd95f795';
-const orderBindingSha256 = '868f52938aaca2f4a97173479bae1cde576e4aca694f4966e74abef3458698b0';
-const archiveFilename = 'soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip';
-
-test('the standalone sample page preserves the complete purchase flow', async () => {
-  const sample = await readFile(new URL('../public/sample.html', import.meta.url), 'utf8');
-
-  assert.match(sample, /RLVR Diagnostic Sample: 5 Tasks/u);
-  assert.doesNotMatch(sample, /RLVR Evaluation Sample: 5 Tasks/u);
-  assert.match(sample, /Artifact version 2\.0\.0/u);
-  assert.match(sample, new RegExp(archiveFilename.replaceAll('.', '\\.'), 'u'));
-  assert.doesNotMatch(sample, /\bMIT\b|Apache(?: License)?[- ]?2\.0/iu);
-  assert.doesNotMatch(sample, /—/u);
-  assert.doesNotMatch(sample, /box-shadow|#533afd|#4032c8|#b9b9f9|#2e2b8c/iu);
-  assert.match(sample, /<link rel="canonical" href="https:\/\/www\.rtltasks\.com\/sample">/u);
-  assert.match(sample, /<main id="sample"[^>]*aria-labelledby="sample-title">/u);
-  assert.match(sample, /id="sample-checkout-form"/u);
-  assert.match(sample, /id="checkout-attempt-id"/u);
-  assert.match(sample, /name="terms_version" value="1\.1\.0"/u);
-  assert.match(sample, new RegExp(`name="terms_sha256" value="${termsSha256}"`, 'u'));
-  assert.match(sample, /name="order_binding_version" value="1\.0\.1"/u);
-  assert.match(sample, new RegExp(`name="order_binding_sha256" value="${orderBindingSha256}"`, 'u'));
-  assert.match(sample, /id="purchase-button"/u);
-  assert.match(sample, /id="store-status" aria-live="polite"/u);
-  assert.match(sample, /fieldset \{ border: 1px solid #777; border-radius: 14px;/u);
-  assert.match(sample, /#purchase-button \{ width: 100%;[^}]*border-radius: 8px;/u);
-  assert.match(sample, /#purchase-button:disabled \{[^}]*cursor: not-allowed;[^}]*opacity: 1;/u);
-  assert.match(sample, /href="\/sample-license\.html(?:#[a-z-]+)?"/u);
-  assert.match(sample, /href="\/refund-policy\.html"/u);
-  assert.match(sample, /href="\/privacy\.html"/u);
-  assert.match(sample, /<script src="\/assets\/checkout\.js"><\/script>/u);
-});
-
-test('public terms expose both exact versioned documents for review and download', async () => {
-  const [termsPage, license, orderBinding] = await Promise.all([
-    readFile(new URL('../public/sample-license.html', import.meta.url), 'utf8'),
-    readFile(new URL('../public/legal/SAMPLE_LICENSE-v1.1.0.md', import.meta.url)),
-    readFile(new URL('../public/legal/TERMS_AND_ORDER_BINDING-v1.0.1.md', import.meta.url)),
-  ]);
-
-  assert.equal(createHash('sha256').update(license).digest('hex'), termsSha256);
-  assert.equal(createHash('sha256').update(orderBinding).digest('hex'), orderBindingSha256);
-  assert.match(termsPage, /Sample license and limitations/u);
-  assert.match(termsPage, /Terms, parties, and order binding/u);
-  assert.match(termsPage, new RegExp(termsSha256, 'u'));
-  assert.match(termsPage, new RegExp(orderBindingSha256, 'u'));
-  assert.match(termsPage, /href="\/legal\/SAMPLE_LICENSE-v1\.1\.0\.md"/u);
-  assert.match(termsPage, /href="\/legal\/TERMS_AND_ORDER_BINDING-v1\.0\.1\.md"/u);
-  assert.match(termsPage, /Originality/u);
-  assert.match(termsPage, /Contracting parties/u);
-  assert.match(termsPage, /Required assent evidence/u);
-});
-
-test('checkout binds one exact value for both documents into Stripe metadata', async () => {
-  const [sample, checkout] = await Promise.all([
-    readFile(new URL('../public/sample.html', import.meta.url), 'utf8'),
-    readFile(new URL('../worker/checkout.js', import.meta.url), 'utf8'),
-  ]);
-
-  for (const name of [
-    'terms_accepted',
-    'terms_version',
-    'terms_sha256',
-    'order_binding_version',
-    'order_binding_sha256',
-  ]) {
-    assert.match(checkout, new RegExp(`exactFormValue\\(form, '${name}'`, 'u'));
-  }
-  assert.match(checkout, /const values = form\.getAll\(name\);/u);
-  assert.match(checkout, /values\.length === 1 && values\[0\] === expected/u);
-  for (const field of [
-    'package_id',
-    'artifact_version',
-    'artifact_sha256',
-    'artifact_asset_path',
-    'archive_filename',
-    'archive_bytes',
-    'terms_version',
-    'terms_sha256',
-    'order_binding_version',
-    'order_binding_sha256',
-    'terms_accepted_at',
-    'terms_acceptance_method',
-  ]) {
-    assert.match(checkout, new RegExp(`${field}:`, 'u'));
-  }
-  assert.match(checkout, /\n\s+metadata,\n\s+payment_intent_data:/u);
-  assert.match(checkout, /payment_intent_data: \{[\s\S]*metadata,/u);
-  assert.match(checkout, /name_collection: \{/u);
-  assert.match(checkout, /individual: \{ enabled: true, optional: false \}/u);
-  assert.match(checkout, /business: \{ enabled: true, optional: true \}/u);
-  assert.match(sample, /I have reviewed and accept both/u);
-  assert.match(sample, /Sample License and Limitations[^<]*(?:version|v) 1\.1\.0/iu);
-  assert.match(sample, /Terms, Parties, and Order Binding[^<]*(?:version|v) 1\.0\.1/iu);
-});
-
-test('the landing and sample pages use Stripe marketing typography while supporting pages retain the Checkout stack', async () => {
-  const [landing, sample, supporting] = await Promise.all([
-    readFile(new URL('../public/index.html', import.meta.url), 'utf8'),
-    readFile(new URL('../public/sample.html', import.meta.url), 'utf8'),
-    readFile(new URL('../public/assets/legal.css', import.meta.url), 'utf8'),
-  ]);
-
-  for (const page of [landing, sample]) {
-    assert.match(page, /font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-weight: 300;/u);
-  }
-  assert.match(landing, /h1 \{[^}]*font-weight: 300;[^}]*letter-spacing: -0\.02em;[^}]*line-height: 1\.08;/u);
-  assert.match(landing, /p \{[^}]*line-height: 1\.4;/u);
-  assert.match(landing, /strong \{ font-weight: 400; \}/u);
-  assert.match(supporting, /font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif;/u);
-
-  for (const stylesheet of [landing, sample, supporting]) {
-    assert.match(stylesheet, /button, input, select, textarea \{ font-family: inherit;/u);
-  }
-});
 
 test('the landing page highlights the three strongest scale claims', async () => {
   const landing = await readFile(new URL('../public/index.html', import.meta.url), 'utf8');
@@ -171,9 +54,8 @@ test('the contact section uses simple accessible text links', async () => {
   assert.doesNotMatch(landing, /#533afd|#4032c8|#b9b9f9|#2e2b8c|rgba\(84, 82, 251/iu);
   assert.match(landing, /Countless more architectures available on request\./u);
   assert.equal((landing.match(/Contact us via:/gu) || []).length, 1);
-  assert.doesNotMatch(landing, /<a href="\/sample\.html" class="purchase-sample-btn">/u);
+  assert.doesNotMatch(landing, /purchase-sample-btn|id="sample-checkout-form"|id="purchase-button"|\/assets\/checkout\.js/u);
   assert.ok(landing.indexOf('Contact us via:') > landing.lastIndexOf('</details>'));
-  assert.doesNotMatch(landing, /id="sample-checkout-form"|id="purchase-button"|\/assets\/checkout\.js/u);
   assert.doesNotMatch(landing, /—/u);
 });
 
@@ -285,35 +167,4 @@ test('all landing content sections are closed, animated native disclosures', asy
   assert.ok(landing.indexOf('Countless more architectures available on request.') > landing.indexOf('id="chip-type-title"'));
   assert.ok(landing.indexOf('Countless more architectures available on request.') < landing.indexOf('id="faq-title"'));
   assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Contact us via:'));
-});
-
-test('the protected fulfillment page names the current Diagnostic Sample ZIP', async () => {
-  const success = await readFile(
-    new URL('../public/purchase-success.html', import.meta.url),
-    'utf8',
-  );
-  assert.match(success, /Diagnostic Sample/u);
-  assert.doesNotMatch(success, /Evaluation Sample/u);
-  assert.match(success, /artifact version 2\.0\.0/iu);
-  assert.match(success, new RegExp(archiveFilename.replaceAll('.', '\\.'), 'u'));
-});
-
-test('sample navigation and canceled checkout returns use the standalone page', async () => {
-  const [checkout, headers, terms, refunds, error, privacy] = await Promise.all([
-    readFile(new URL('../worker/checkout.js', import.meta.url), 'utf8'),
-    readFile(new URL('../public/_headers', import.meta.url), 'utf8'),
-    readFile(new URL('../public/sample-license.html', import.meta.url), 'utf8'),
-    readFile(new URL('../public/refund-policy.html', import.meta.url), 'utf8'),
-    readFile(new URL('../public/purchase-error.html', import.meta.url), 'utf8'),
-    readFile(new URL('../public/privacy.html', import.meta.url), 'utf8'),
-  ]);
-
-  assert.match(checkout, /cancel_url: `\$\{config\.siteOrigin\}\/sample\?checkout=cancelled`/u);
-  assert.doesNotMatch(checkout, /\?checkout=cancelled#sample/u);
-  assert.match(headers, /^\/sample\n  Cache-Control: private, no-store, max-age=0$/mu);
-  for (const page of [terms, refunds, error, privacy]) {
-    assert.match(page, /href="\/sample\.html"/u);
-    assert.doesNotMatch(page, /href="\/#sample"/u);
-  }
-  assert.match(refunds, /revisiting the sample purchase page/u);
 });

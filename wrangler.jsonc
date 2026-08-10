@@ -27,37 +27,14 @@
     }
   ],
   "assets": {
-    "directory": "./.worker-assets",
+    "directory": "./public",
     "binding": "ASSETS",
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page",
     "run_worker_first": true
   },
-  "d1_databases": [
-    {
-      "binding": "ORDERS",
-      "database_name": "rtldatasets-orders",
-      "database_id": "5f8f3805-b0bd-4a41-be68-d7fda360d7a4"
-    }
-  ],
-  "ratelimits": [
-    {
-      "name": "CHECKOUT_RATE_LIMITER",
-      "namespace_id": "240801001",
-      "simple": {
-        "limit": 10,
-        "period": 60
-      }
-    }
-  ],
   "vars": {
-    "STORE_LIVE": "true",
-    "SITE_URL": "https://www.rtltasks.com",
-    "STRIPE_MODE": "live",
-    "STRIPE_AUTOMATIC_TAX": "false",
-    "SAMPLE_ASSET_PATH": "/__private/artifacts/soc-dv-rlvr-diagnostic-sample-5-task/v2.0.0/sha256/99ea9ecffc4f9e9d5d456b14510d6976c36b6e8be31ce246a8ee025c21d2b0bc/soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip",
-    "SAMPLE_ARCHIVE_SHA256": "99ea9ecffc4f9e9d5d456b14510d6976c36b6e8be31ce246a8ee025c21d2b0bc",
-    "SAMPLE_ARCHIVE_BYTES": "154827"
+    "SITE_URL": "https://www.rtltasks.com"
   },
   "observability": {
     "enabled": true,
