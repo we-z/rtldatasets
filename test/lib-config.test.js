@@ -16,7 +16,7 @@ function environment() {
     SAMPLE_ARCHIVE_SHA256: PRODUCT.archiveSha256,
     SAMPLE_ASSET_PATH: PRODUCT.artifactAssetPath,
     SAMPLE_ARCHIVE_BYTES: String(PRODUCT.archiveBytes),
-    SAMPLE_ARTIFACT_BLOB_URL: 'https://example.public.blob.vercel-storage.com/artifact.zip',
+    BLOB_READ_WRITE_TOKEN: 'vercel_blob_rw_test_token',
     DATABASE_URL: 'postgres://user:pass@localhost:5432/db',
     UPSTASH_REDIS_REST_URL: 'https://example.upstash.io',
     UPSTASH_REDIS_REST_TOKEN: 'token',
@@ -42,9 +42,9 @@ test('store live flag and missing environment fail closed', () => {
   assert.deepEqual(getStoreAvailability(env), { available: false });
 });
 
-test('a missing protected artifact blob URL fails closed', () => {
+test('a missing protected artifact Blob token fails closed', () => {
   const env = environment();
-  delete env.SAMPLE_ARTIFACT_BLOB_URL;
+  delete env.BLOB_READ_WRITE_TOKEN;
   assert.deepEqual(getStoreAvailability(env), { available: false });
 });
 

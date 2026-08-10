@@ -24,9 +24,10 @@ production setup" below. Do not delete the Cloudflare code/config until then.
   (`lib/ratelimit.js`), replacing Cloudflare's rate-limiting binding.
 - The verified Stripe return grants immediate, browser-bound download access;
   webhook-backed Postgres state can restore an interrupted return in the same browser.
-- The immutable ZIP archive lives in Vercel Blob storage (uploaded once via
-  `npm run upload:artifact`), fetched by URL at request time in
-  `lib/artifact.js`. It is never committed to git and never served from
+- The immutable ZIP archive lives in a **private** Vercel Blob store (uploaded
+  once via `npm run upload:artifact`), fetched by pathname with an
+  authenticated request at request time in `lib/artifact.js` — the blob has
+  no public URL at all. It is never committed to git and never served from
   `public/`; only `/api/download-sample` can reach it, after verifying the
   entitlement cookie and re-checking the Stripe session. (Bundling it as a
   local file into the function was considered and rejected — git-triggered
@@ -159,11 +160,13 @@ separate.
    DATABASE_URL=... npm run migrate:orders:d1-to-pg
    ```
 
-5. Upload the immutable release ZIP to Vercel Blob and set the resulting URL
-   as the `SAMPLE_ARTIFACT_BLOB_URL` environment variable:
+5. Create a private Blob store and upload the immutable release ZIP to it
+   (`vercel blob create-store` auto-sets `BLOB_READ_WRITE_TOKEN` on the
+   project; nothing else needs configuring):
 
    ```sh
-   BLOB_READ_WRITE_TOKEN=... npm run upload:artifact -- \
+   npx vercel blob create-store <name> --access private --yes
+   npm run upload:artifact -- \
      /absolute/path/to/soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip
    ```
 
