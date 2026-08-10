@@ -20,8 +20,11 @@ production setup" below. Do not delete the Cloudflare code/config until then.
   artifact hash, payment, refund, and dispute state directly against Stripe
   before showing the confirmation page — there is no order database on this
   deployment. Stripe's own Dashboard is the fulfillment record.
-- Upstash Redis (via the Vercel Marketplace) backs checkout rate limiting
-  (`lib/ratelimit.js`), replacing Cloudflare's rate-limiting binding.
+- Checkout rate limiting (`lib/ratelimit.js`) is a plain in-process,
+  dependency-free counter — no external database or SaaS account. It only
+  limits per function instance, so it's best-effort rather than a hard
+  global cap; Stripe's own idempotency keys still prevent duplicate charges
+  regardless.
 - **Fulfillment is manual**: the purchased release (name/version/filename,
   pinned via `SAMPLE_ASSET_PATH` etc. and recorded in the Stripe session's
   metadata) is emailed to the customer by hand after payment is confirmed.
@@ -139,31 +142,29 @@ separate.
 
 1. `vercel login`, then link this repo to a Vercel project (`vercel link`) and
    connect it to the `we-z/rtltasks.com` GitHub repository for auto-deploy on push.
-2. In the Vercel project dashboard, add the Upstash (Redis) Marketplace
-   integration. Copy the resulting `UPSTASH_REDIS_REST_URL` and
-   `UPSTASH_REDIS_REST_TOKEN` into the project's environment variables.
-3. Set the remaining environment variables on the Vercel project (see
-   `.env.example`): `STORE_LIVE=true`, `SITE_URL=https://www.rtltasks.com`,
-   `STRIPE_MODE`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
-   `STRIPE_SAMPLE_PRICE_ID`, `STRIPE_AUTOMATIC_TAX`,
-   `ENTITLEMENT_SIGNING_SECRET`, `SAMPLE_ASSET_PATH`, `SAMPLE_ARCHIVE_SHA256`,
-   `SAMPLE_ARCHIVE_BYTES` (must match `lib/product.js` exactly).
-4. In Stripe, add a webhook endpoint for `https://www.rtltasks.com/api/stripe-webhook`
+2. Set the environment variables on the Vercel project (see `.env.example`):
+   `STORE_LIVE=true`, `SITE_URL=https://www.rtltasks.com`, `STRIPE_MODE`,
+   `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_SAMPLE_PRICE_ID`,
+   `STRIPE_AUTOMATIC_TAX`, `ENTITLEMENT_SIGNING_SECRET`, `SAMPLE_ASSET_PATH`,
+   `SAMPLE_ARCHIVE_SHA256`, `SAMPLE_ARCHIVE_BYTES` (must match
+   `lib/product.js` exactly). No database or third-party rate-limiting
+   service is used, so there's nothing else to provision.
+3. In Stripe, add a webhook endpoint for `https://www.rtltasks.com/api/stripe-webhook`
    (events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`)
    and set its signing secret as `STRIPE_WEBHOOK_SECRET` above.
-5. Test the full flow against the Vercel preview URL in Stripe test mode
+4. Test the full flow against the Vercel preview URL in Stripe test mode
    (checkout → `/purchase-complete` → `/purchase-success`, plus
    `stripe listen --forward-to <preview>/api/stripe-webhook`) before touching DNS.
-6. DNS cutover (domains stay on Cloudflare DNS — no nameserver change): in
+5. DNS cutover (domains stay on Cloudflare DNS — no nameserver change): in
    the Vercel project, add `www.rtltasks.com` as a domain and follow its
    instructions. In the Cloudflare DNS dashboard, change the `www` record
    from the Worker Custom Domain to the CNAME Vercel gives you, and the apex
    `rtltasks.com` record similarly, both with the Cloudflare proxy set to
    "DNS only" (grey cloud) rather than proxied. Repeat for
    `rtldatasets.com`/`puul.ai` if migrating those too.
-7. Set up the manual fulfillment process on your end (e.g., a Stripe
+6. Set up the manual fulfillment process on your end (e.g., a Stripe
    Dashboard notification or saved search for new $1,000 payments) so a
    human emails the customer the release ZIP after each purchase.
-8. Leave the Cloudflare Worker and D1 database running (do not delete) until
+7. Leave the Cloudflare Worker and D1 database running (do not delete) until
    Vercel has served production traffic cleanly for a few days, then
    decommission them.

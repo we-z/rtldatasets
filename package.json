@@ -22,8 +22,6 @@
     "test": "node --test"
   },
   "dependencies": {
-    "@upstash/ratelimit": "2.0.8",
-    "@upstash/redis": "1.38.2",
     "stripe": "22.4.0"
   },
   "devDependencies": {

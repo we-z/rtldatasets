@@ -16,8 +16,6 @@ function environment() {
     SAMPLE_ARCHIVE_SHA256: PRODUCT.archiveSha256,
     SAMPLE_ASSET_PATH: PRODUCT.artifactAssetPath,
     SAMPLE_ARCHIVE_BYTES: String(PRODUCT.archiveBytes),
-    UPSTASH_REDIS_REST_URL: 'https://example.upstash.io',
-    UPSTASH_REDIS_REST_TOKEN: 'token',
   };
 }
 
@@ -36,7 +34,7 @@ test('store live flag and missing environment fail closed', () => {
   env.STORE_LIVE = 'false';
   assert.deepEqual(getStoreAvailability(env), { available: false });
   env.STORE_LIVE = 'true';
-  delete env.UPSTASH_REDIS_REST_URL;
+  delete env.ENTITLEMENT_SIGNING_SECRET;
   assert.deepEqual(getStoreAvailability(env), { available: false });
 });
 
