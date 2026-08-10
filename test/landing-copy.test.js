@@ -171,11 +171,8 @@ test('the contact section uses simple accessible text links', async () => {
   assert.doesNotMatch(landing, /#533afd|#4032c8|#b9b9f9|#2e2b8c|rgba\(84, 82, 251/iu);
   assert.match(landing, /Countless more architectures available on request\./u);
   assert.equal((landing.match(/Contact us via:/gu) || []).length, 1);
-  assert.match(landing, /<a href="\/sample\.html" class="purchase-sample-btn">Evaluate sample tasks<\/a>/u);
-  assert.match(landing, /\.purchase-sample-btn \{[^}]*width: 100%;[^}]*margin: 3rem auto 2\.5rem;[^}]*border-radius: 8px;/u);
-  assert.match(landing, /@media \(max-width: 640px\) \{[\s\S]*?\.purchase-sample-btn \{ width: 100%; max-width: none; \}/u);
+  assert.doesNotMatch(landing, /<a href="\/sample\.html" class="purchase-sample-btn">/u);
   assert.ok(landing.indexOf('Contact us via:') > landing.lastIndexOf('</details>'));
-  assert.ok(landing.indexOf('Diagnostic Sample') < landing.indexOf('Contact us via:'));
   assert.doesNotMatch(landing, /id="sample-checkout-form"|id="purchase-button"|\/assets\/checkout\.js/u);
   assert.doesNotMatch(landing, /—/u);
 });
@@ -188,9 +185,9 @@ test('all landing content sections are closed, animated native disclosures', asy
 
   assert.equal((landing.match(/<details class="collapsible-group">/gu) || []).length, 3);
   assert.equal((landing.match(/<details class="collapsible-group collapsible-subgroup">/gu) || []).length, 4);
-  assert.equal((landing.match(/<details class="collapsible-section">/gu) || []).length, 19);
-  assert.equal((landing.match(/<summary class="collapsible-summary">/gu) || []).length, 26);
-  assert.equal((landing.match(/class="section-chevron" aria-hidden="true"/gu) || []).length, 26);
+  assert.equal((landing.match(/<details class="collapsible-section">/gu) || []).length, 20);
+  assert.equal((landing.match(/<summary class="collapsible-summary">/gu) || []).length, 27);
+  assert.equal((landing.match(/class="section-chevron" aria-hidden="true"/gu) || []).length, 27);
   assert.doesNotMatch(landing, /<details[^>]*\sopen(?:\s|=|>)/iu);
   assert.match(landing, /\.collapsible-summary \{[^}]*min-height: 44px;[^}]*cursor: pointer;/u);
   assert.match(landing, /\.collapsible-summary \{[^}]*background: transparent;[^}]*-webkit-tap-highlight-color: transparent;/u);
@@ -287,7 +284,7 @@ test('all landing content sections are closed, animated native disclosures', asy
   assert.ok(landing.indexOf('id="chip-type-title"') < landing.indexOf('id="faq-title"'));
   assert.ok(landing.indexOf('Countless more architectures available on request.') > landing.indexOf('id="chip-type-title"'));
   assert.ok(landing.indexOf('Countless more architectures available on request.') < landing.indexOf('id="faq-title"'));
-  assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Evaluate sample tasks'));
+  assert.ok(landing.indexOf('id="faq-title"') < landing.indexOf('Contact us via:'));
 });
 
 test('the protected fulfillment page names the current Diagnostic Sample ZIP', async () => {

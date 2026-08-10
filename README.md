@@ -1,18 +1,43 @@
 # rtltasks.com
 
-Static landing pages and a Cloudflare Worker for selling the five-task SoC
+Static landing pages and a serverless backend for selling the five-task SoC
 Design + Verification RLVR Diagnostic Sample.
 
-## Architecture
+**Migration in progress:** hosting is moving from Cloudflare Workers to
+Vercel (git-push auto-deploy, no more manual `wrangler deploy`). The
+Cloudflare Worker (`worker/`, `wrangler*.jsonc`, D1) remains the live
+production system until the Vercel deployment (`api/`, `lib/`, `vercel.json`)
+has been verified end-to-end and DNS has been cut over — see "Vercel
+production setup" below. Do not delete the Cloudflare code/config until then.
 
-- Cloudflare Workers Static Assets serves `public/`.
-- `/api/*` runs through `worker/index.js`.
+## Architecture (Vercel, target)
+
+- `public/` is a plain, framework-free static site, served directly by Vercel.
+- `/api/*` is one Vercel serverless function per route (`api/*.js`), each a
+  thin wrapper around shared logic in `lib/`.
 - Stripe hosted Checkout charges the fixed server-side one-time price of $1,000.
 - Stripe webhooks and the checkout return both verify the exact SKU, Price,
   artifact hash, payment, refund, and dispute state.
-- Cloudflare D1 stores idempotent fulfillment and download audit state.
+- Postgres (e.g. Neon, added via the Vercel Marketplace) stores idempotent
+  fulfillment and download audit state — see `migrations-pg/`.
+- Upstash Redis (via the Vercel Marketplace) backs checkout rate limiting
+  (`lib/ratelimit.js`), replacing Cloudflare's rate-limiting binding.
 - The verified Stripe return grants immediate, browser-bound download access;
-  webhook-backed D1 state can restore an interrupted return in the same browser.
+  webhook-backed Postgres state can restore an interrupted return in the same browser.
+- The immutable ZIP archive lives in Vercel Blob storage (uploaded once via
+  `npm run upload:artifact`), fetched by URL at request time in
+  `lib/artifact.js`. It is never committed to git and never served from
+  `public/`; only `/api/download-sample` can reach it, after verifying the
+  entitlement cookie and re-checking the Stripe session. (Bundling it as a
+  local file into the function was considered and rejected — git-triggered
+  deploys build from a fresh clone, so a git-ignored local file would be
+  missing on every such deploy.)
+
+## Architecture (Cloudflare, current production)
+
+- Cloudflare Workers Static Assets serves `public/`.
+- `/api/*` runs through `worker/index.js`.
+- Cloudflare D1 stores the same fulfillment/download audit state.
 - The immutable ZIP archive is deployed as a protected Workers Static Asset from an
   ignored local build directory. Direct requests to its reserved path always
   run through the Worker and return 404; only the authenticated download route
@@ -42,12 +67,13 @@ npm run deploy:staging
 ```sh
 npm install
 npm test
-npm run db:migrate:local
-npm run dev
+npm run dev            # vercel dev, reads .env (copy from .env.example)
+npm run dev:cloudflare # wrangler dev, reads .dev.vars (copy from .dev.vars.example)
 ```
 
-Copy `.dev.vars.example` to the ignored `.dev.vars` only for local Stripe test
-credentials. Do not put live keys in repository files.
+Copy `.env.example`/`.dev.vars.example` to the ignored `.env`/`.dev.vars`
+only for local Stripe test credentials. Do not put live keys in repository
+files.
 
 ## Prepare the customer package
 
@@ -111,3 +137,56 @@ when that browser retains its essential checkout data.
 
 Production and sandbox Stripe keys, Prices, and webhook secrets must remain
 separate.
+
+## Vercel production setup
+
+1. `vercel login`, then link this repo to a Vercel project (`vercel link`) and
+   connect it to the `we-z/rtltasks.com` GitHub repository for auto-deploy on push.
+2. In the Vercel project dashboard, add the Neon (Postgres) and Upstash
+   (Redis) Marketplace integrations. Copy the resulting `DATABASE_URL`,
+   `UPSTASH_REDIS_REST_URL`, and `UPSTASH_REDIS_REST_TOKEN` into the
+   project's environment variables.
+3. Apply `migrations-pg/` to the new database:
+
+   ```sh
+   DATABASE_URL=... npm run db:migrate:pg
+   ```
+
+4. One-time backfill of existing Cloudflare D1 orders so past customers keep
+   working (read-only against D1, safe to re-run):
+
+   ```sh
+   DATABASE_URL=... npm run migrate:orders:d1-to-pg
+   ```
+
+5. Upload the immutable release ZIP to Vercel Blob and set the resulting URL
+   as the `SAMPLE_ARTIFACT_BLOB_URL` environment variable:
+
+   ```sh
+   BLOB_READ_WRITE_TOKEN=... npm run upload:artifact -- \
+     /absolute/path/to/soc-dv-gpt-5.6-luna-customer-package-v2.0.0.zip
+   ```
+
+6. Set the remaining environment variables on the Vercel project (see
+   `.env.example`): `STORE_LIVE=true`, `SITE_URL=https://www.rtltasks.com`,
+   `STRIPE_MODE`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`,
+   `STRIPE_SAMPLE_PRICE_ID`, `STRIPE_AUTOMATIC_TAX`,
+   `ENTITLEMENT_SIGNING_SECRET`, `SAMPLE_ASSET_PATH`, `SAMPLE_ARCHIVE_SHA256`,
+   `SAMPLE_ARCHIVE_BYTES` (must match `lib/product.js` exactly).
+7. In Stripe, add a webhook endpoint for `https://www.rtltasks.com/api/stripe-webhook`
+   (events: `checkout.session.completed`, `checkout.session.async_payment_succeeded`)
+   and set its signing secret as `STRIPE_WEBHOOK_SECRET` above.
+8. Test the full flow against the Vercel preview URL in Stripe test mode
+   (checkout → `/purchase-complete` → `/purchase-success` →
+   `/api/download-sample`, plus `stripe listen --forward-to <preview>/api/stripe-webhook`)
+   before touching DNS.
+9. DNS cutover (domains stay on Cloudflare DNS — no nameserver change): in
+   the Vercel project, add `www.rtltasks.com` as a domain and follow its
+   instructions. In the Cloudflare DNS dashboard, change the `www` record
+   from the Worker Custom Domain to the CNAME Vercel gives you, and the apex
+   `rtltasks.com` record similarly, both with the Cloudflare proxy set to
+   "DNS only" (grey cloud) rather than proxied. Repeat for
+   `rtldatasets.com`/`puul.ai` if migrating those too.
+10. Leave the Cloudflare Worker and D1 database running (do not delete) until
+    Vercel has served production traffic cleanly for a few days, then
+    decommission them.
