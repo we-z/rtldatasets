@@ -1,7 +1,0 @@
-/*
-  Content-Security-Policy: default-src 'self'; base-uri 'none'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; img-src 'self' data:; object-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'
-  Permissions-Policy: camera=(), geolocation=(), microphone=(), payment=()
-  Referrer-Policy: same-origin
-  Strict-Transport-Security: max-age=63072000; includeSubDomains
-  X-Content-Type-Options: nosniff
-  X-Frame-Options: DENY

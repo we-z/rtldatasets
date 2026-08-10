@@ -1,7 +1,0 @@
-* { box-sizing: border-box; }
-body { margin: 0; padding: 2rem; color: #111; background: white; font-family: -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Ubuntu, sans-serif; }
-button, input, select, textarea { font-family: inherit; }
-main { max-width: 720px; margin: 0 auto; }
-h1 { font-size: 2rem; }
-p { font-size: 1.05rem; line-height: 1.6; }
-a { color: blue; }
